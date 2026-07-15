@@ -1,0 +1,61 @@
+# Déploiement de l'API FastAPI toilettage.
+# Suit les conventions du cluster : image Harbor, envFrom (ConfigMap + Secret),
+# probes HTTP, resources, anti-affinité control-plane, imagePullSecret harbor-regcred.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toilettage-api
+  namespace: toilettage
+  labels:
+    app: toilettage-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: toilettage-api
+  template:
+    metadata:
+      labels:
+        app: toilettage-api
+    spec:
+      imagePullSecrets:
+        - name: harbor-regcred
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+      containers:
+        - name: api
+          # Tag remplacé par Jenkins au déploiement (ex. :<git-sha> ou :dev).
+          image: harbor.proxbenovh.cloud/devops-project-harbor/toilettage-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: toilettage-api-config
+            - secretRef:
+                name: toilettage-api-secret
+          readinessProbe:
+            httpGet:
+              path: /api/v1/readyz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/healthz
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi

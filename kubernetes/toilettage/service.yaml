@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: toilettage-api
+  namespace: toilettage
+  labels:
+    app: toilettage-api
+spec:
+  type: ClusterIP
+  selector:
+    app: toilettage-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000

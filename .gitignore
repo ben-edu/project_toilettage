@@ -1,0 +1,30 @@
+# Secrets & env — jamais dans Git
+.env
+*.env
+!.env.example
+secret.yaml
+kubernetes/**/secret.yaml
+*.key
+*.pem
+
+# Archives — artefacts de build
+*.tar.gz
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.db
+.pytest_cache/
+.mypy_cache/
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,17 @@
+# Service PostgreSQL (ClusterIP). Nom = toilettage-db, résolu par l'API
+# via POSTGRES_HOST=toilettage-db dans le même namespace.
+apiVersion: v1
+kind: Service
+metadata:
+  name: toilettage-db
+  namespace: toilettage
+  labels:
+    app: toilettage-postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: toilettage-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

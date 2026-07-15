@@ -1,0 +1,49 @@
+# Ingress Traefik pour l'API.
+# TLS terminé en amont sur HAProxy (ACME/OVH géré hors cluster) → pas de bloc
+# tls: ici. Le trafic arrive déjà déchiffré sur Traefik via OPNsense.
+#
+# Prod et staging pointent vers le MÊME Service dans ce namespace unique.
+# Si tu préfères isoler staging, crée un namespace toilettage-staging séparé
+# (recommandé quand dev/prod divergent fortement). Pour démarrer, un namespace
+# suffit et le frontend cible l'host API correspondant à son environnement.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: toilettage-api
+  namespace: toilettage
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: api.toilettage.proxbenovh.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: toilettage-api
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: toilettage-api-staging
+  namespace: toilettage
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: api.staging.toilettage.proxbenovh.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: toilettage-api
+                port:
+                  number: 80

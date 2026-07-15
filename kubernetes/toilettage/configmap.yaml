@@ -1,0 +1,30 @@
+# Configuration non sensible de l'API. Les secrets (DB, SMTP) sont dans
+# toilettage-api-secret. Valeurs pour la PRODUCTION — adapter pour staging
+# (voir overlay/branche dev : ENVIRONMENT=staging, CORS staging, etc.).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: toilettage-api-config
+  namespace: toilettage
+data:
+  ENVIRONMENT: "prod"
+  API_PREFIX: "/api/v1"
+  POSTGRES_HOST: "toilettage-db"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "toilettage"
+  CORS_ORIGINS: "https://toilettage.proxbenovh.cloud,https://staging.toilettage.proxbenovh.cloud"
+  # Zone de service
+  SERVICE_CENTER_LAT: "47.9027"
+  SERVICE_CENTER_LNG: "1.9086"
+  SERVICE_RADIUS_KM: "10"
+  NOMINATIM_URL: "https://nominatim.openstreetmap.org"
+  NOMINATIM_USER_AGENT: "toilettage-orleans/1.0 (contact: admin@proxbenovh.cloud)"
+  # Agenda
+  WORK_START_HOUR: "9"
+  WORK_END_HOUR: "18"
+  TRAVEL_BUFFER_MINUTES: "30"
+  SLOT_GRANULARITY_MINUTES: "15"
+  # Keycloak (realm dédié)
+  KEYCLOAK_URL: "https://keycloak.soria-academie.fr"
+  KEYCLOAK_REALM: "toilettage"
+  KEYCLOAK_CLIENT_ID: "toilettage-admin"

@@ -1,0 +1,70 @@
+# PostgreSQL dédié au projet toilettage.
+# Suit le pattern moderne du cluster : StatefulSet + volumeClaimTemplates,
+# storageClass local-path. Identifiants fournis via le Secret toilettage-db-secret
+# (voir secret.example.yaml — NE PAS committer les vraies valeurs).
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: toilettage-postgres
+  namespace: toilettage
+  labels:
+    app: toilettage-postgres
+spec:
+  serviceName: toilettage-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toilettage-postgres
+  template:
+    metadata:
+      labels:
+        app: toilettage-postgres
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - name: postgres
+              containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: toilettage-db-secret
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 5Gi
