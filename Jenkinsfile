@@ -5,10 +5,11 @@
 //   dev        -> déploie sur STAGING (API K3s + frontend Hestia staging)
 //   main       -> déploie en PRODUCTION (après merge validé depuis dev)
 //
-// Prérequis Jenkins (credentials, à configurer dans Jenkins, JAMAIS ici) :
-//   - harbor-robot-devops-project-harbor : robot account Harbor (usernamePassword)
-//   - kubeconfig monté : /var/lib/jenkins/.kube/config-afpa-k3s
-//   - hestia-ben-ssh   : clé SSH pour rsync vers la VM Hestia (sshUserPrivateKey)
+// Prérequis Jenkins (déjà configurés, JAMAIS ici) :
+//   - harbor-robot-devops-project-harbor : login Harbor (usernamePassword, robot account)
+//   - hestia-ben-ssh                     : clé SSH pour rsync vers Hestia (sshUserPrivateKey)
+//   - kubeconfig monté sur l'agent : /var/lib/jenkins/.kube/config-afpa-k3s
+//     (même méthode que les projets existants ; PAS un credential Jenkins)
 //
 // Règles respectées :
 //   - rsync Hestia avec --exclude='.env' (ne jamais écraser le .env distant)
@@ -24,7 +25,6 @@ pipeline {
     IMAGE_NAME      = 'toilettage-api'
     IMAGE_TAG       = "${env.GIT_COMMIT?.take(8) ?: env.BUILD_NUMBER}"
     K8S_NAMESPACE   = 'toilettage'
-    KUBECONFIG      = '/var/lib/jenkins/.kube/config-afpa-k3s'
   }
 
   options {
@@ -57,6 +57,8 @@ pipeline {
 
     stage('API — tests') {
       steps {
+        // L'agent Jenkins n'a pas python3-venv : on lance les tests dans un
+        // conteneur Docker (même approche que les projets existants).
         sh '''
           set -e
           docker run --rm \
@@ -116,6 +118,8 @@ pipeline {
             kubectl apply -f kubernetes/toilettage/deployment.yaml
 
             # Surcharge par branche la valeur ENVIRONMENT (staging vs prod).
+            # kubectl set env surcharge proprement, sans JSON échappé fragile ;
+            # la variable explicite prime sur celle issue de envFrom/ConfigMap.
             kubectl -n "$K8S_NAMESPACE" set env deployment/toilettage-api \
               ENVIRONMENT="$DEPLOY_ENV"
 
@@ -123,48 +127,45 @@ pipeline {
             kubectl -n "$K8S_NAMESPACE" set image deployment/toilettage-api api="$FULL_IMAGE"
             kubectl -n "$K8S_NAMESPACE" rollout status deployment/toilettage-api --timeout=120s
 
-            # Crée les tables + données de base si elles n'existent pas encore
-            # (idempotent : le seed ne recrée pas ce qui existe).
-            kubectl -n "$K8S_NAMESPACE" exec deploy/toilettage-api -- python -m app.seed
+            # Le seed (création tables + données de base) est exécuté AU DÉMARRAGE
+            # de l'application (lifespan FastAPI, idempotent, verrou consultatif).
+            # Plus besoin de kubectl exec ici : évite la permission RBAC pods/exec.
         '''
       }
     }
 
-    // DÉSACTIVÉ TEMPORAIREMENT — Hestia (BM1) pas encore configuré.
-    // Réactiver quand l'utilisateur système + docroot + port SSH seront confirmés.
-    // stage('Frontend — déploiement Hestia') {
-    //   when { anyOf { branch 'dev'; branch 'main' } }
-    //   steps {
-    //     withCredentials([sshUserPrivateKey(
-    //         credentialsId: 'hestia-ben-ssh',
-    //         keyFileVariable: 'SSH_KEY',
-    //         usernameVariable: 'SSH_USER')]) {
-    //       sh '''
-    //         set -e
-    //         # rsync du frontend vers le document root Hestia.
-    //         # --exclude='.env' : NE JAMAIS écraser le .env distant.
-    //         rsync -av --delete \
-    //           --exclude='.env' \
-    //           -e "ssh -i $SSH_KEY -p 2222 -o StrictHostKeyChecking=accept-new" \
-    //           frontend/ \
-    //           "$SSH_USER@$FRONTEND_HOST:$HESTIA_DOCROOT/"
-    //       '''
-    //     }
-    //   }
-    // }
-    //
-    // DÉSACTIVÉ TEMPORAIREMENT — lié au déploiement frontend Hestia.
-    // stage('Smoke test') {
-    //   when { anyOf { branch 'dev'; branch 'main' } }
-    //   steps {
-    //     sh '''
-    //       set -e
-    //       echo "Frontend : https://$FRONTEND_HOST"
-    //       curl -fsSI "https://$FRONTEND_HOST" | head -1 || echo "AVERTISSEMENT: frontend non joignable"
-    //       # L'API est vérifiée via son ingress public.
-    //     '''
-    //   }
-    // }
+    stage('Frontend — déploiement Hestia') {
+      when { anyOf { branch 'dev'; branch 'main' } }
+      steps {
+        withCredentials([sshUserPrivateKey(
+            credentialsId: 'hestia-ben-ssh',
+            keyFileVariable: 'SSH_KEY',
+            usernameVariable: 'SSH_USER')]) {
+          sh '''
+            set -e
+            # rsync du frontend vers le document root Hestia.
+            # --exclude='.env' : NE JAMAIS écraser le .env distant.
+            rsync -av --delete \
+              --exclude='.env' \
+              -e "ssh -i $SSH_KEY -p 2222 -o StrictHostKeyChecking=accept-new" \
+              frontend/ \
+              "$SSH_USER@$FRONTEND_HOST:$HESTIA_DOCROOT/"
+          '''
+        }
+      }
+    }
+
+    stage('Smoke test') {
+      when { anyOf { branch 'dev'; branch 'main' } }
+      steps {
+        sh '''
+          set -e
+          echo "Frontend : https://$FRONTEND_HOST"
+          curl -fsSI "https://$FRONTEND_HOST" | head -1 || echo "AVERTISSEMENT: frontend non joignable"
+          # L'API est vérifiée via son ingress public.
+        '''
+      }
+    }
   }
 
   post {

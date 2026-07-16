@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     app_name: str = "Toilettage API"
     environment: str = Field(default="dev")  # dev | staging | prod
     api_prefix: str = "/api/v1"
+    # Crée tables + données de base au démarrage (idempotent). Désactivable en
+    # prod si l'on préfère gérer le schéma via des migrations Alembic.
+    seed_on_startup: bool = Field(default=True)
 
     # --- Base de données (PostgreSQL) ---
     # En prod, fournie via Secret K8s (voir secret.example.yaml).

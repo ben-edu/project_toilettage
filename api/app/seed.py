@@ -10,8 +10,9 @@ Idempotent : ne recrée pas ce qui existe déjà.
 """
 
 from datetime import time
+import logging
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from app.core.database import Base, SessionLocal, engine
 from app.models.booking import (
@@ -20,6 +21,12 @@ from app.models.booking import (
     SizeCoefficient,
     WorkingHours,
 )
+
+logger = logging.getLogger("toilettage.seed")
+
+# Identifiant arbitraire pour le verrou consultatif PostgreSQL (évite que deux
+# pods exécutent le seed simultanément). Ignoré sur SQLite (dev/tests).
+_ADVISORY_LOCK_ID = 918273645
 
 DEFAULT_SERVICES = [
     dict(slug="bain", name="Bain (shampooing)",
@@ -46,10 +53,23 @@ DEFAULT_COEFFICIENTS = [
 DEFAULT_HOURS = [(wd, time(9, 0), time(18, 0)) for wd in range(0, 5)]
 
 
+def _is_postgres() -> bool:
+    return engine.url.get_backend_name().startswith("postgresql")
+
+
 def seed() -> None:
+    """Crée les tables et insère les données de base (idempotent).
+
+    Protégé par un verrou consultatif PostgreSQL pour éviter les courses entre
+    pods au démarrage. Sûr à appeler à chaque démarrage de l'application.
+    """
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        # Verrou consultatif : un seul pod seede à la fois (no-op sur SQLite).
+        if _is_postgres():
+            db.execute(text("SELECT pg_advisory_lock(:id)"), {"id": _ADVISORY_LOCK_ID})
+
         for size, coef in DEFAULT_COEFFICIENTS:
             exists = db.execute(
                 select(SizeCoefficient).where(SizeCoefficient.size == size)
@@ -72,9 +92,25 @@ def seed() -> None:
                 db.add(WorkingHours(weekday=wd, start_time=start, end_time=end))
 
         db.commit()
+        logger.info("Seed terminé avec succès.")
         print("Seed terminé avec succès.")
     finally:
+        if _is_postgres():
+            db.execute(text("SELECT pg_advisory_unlock(:id)"), {"id": _ADVISORY_LOCK_ID})
+            db.commit()
         db.close()
+
+
+def seed_safe() -> None:
+    """Appelle seed() en avalant les erreurs (pour le démarrage de l'app).
+
+    Si la base n'est pas encore prête, on journalise sans faire planter le pod :
+    les probes doivent pouvoir passer et un redémarrage réessaiera.
+    """
+    try:
+        seed()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Seed au démarrage ignoré (réessai plus tard) : %s", exc)
 
 
 if __name__ == "__main__":
