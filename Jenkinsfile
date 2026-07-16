@@ -6,9 +6,9 @@
 //   main       -> déploie en PRODUCTION (après merge validé depuis dev)
 //
 // Prérequis Jenkins (credentials, à configurer dans Jenkins, JAMAIS ici) :
-//   - harbor-creds        : login Harbor (usernamePassword)
-//   - kubeconfig-bm2      : kubeconfig du cluster K3s (secret file)
-//   - hestia-ssh          : clé SSH pour rsync vers la VM Hestia (sshUserPrivateKey)
+//   - harbor-robot-devops-project-harbor : robot account Harbor (usernamePassword)
+//   - kubeconfig monté : /var/lib/jenkins/.kube/config-afpa-k3s
+//   - hestia-ben-ssh   : clé SSH pour rsync vers la VM Hestia (sshUserPrivateKey)
 //
 // Règles respectées :
 //   - rsync Hestia avec --exclude='.env' (ne jamais écraser le .env distant)
@@ -24,6 +24,7 @@ pipeline {
     IMAGE_NAME      = 'toilettage-api'
     IMAGE_TAG       = "${env.GIT_COMMIT?.take(8) ?: env.BUILD_NUMBER}"
     K8S_NAMESPACE   = 'toilettage'
+    KUBECONFIG      = '/var/lib/jenkins/.kube/config-afpa-k3s'
   }
 
   options {
@@ -72,7 +73,7 @@ pipeline {
       steps {
         dir('api') {
           withCredentials([usernamePassword(
-              credentialsId: 'harbor-creds',
+              credentialsId: 'harbor-robot-devops-project-harbor',
               usernameVariable: 'HARBOR_USER',
               passwordVariable: 'HARBOR_PASS')]) {
             sh '''
@@ -92,23 +93,21 @@ pipeline {
     stage('API — déploiement K3s') {
       when { anyOf { branch 'dev'; branch 'main' } }
       steps {
-        withCredentials([file(credentialsId: 'kubeconfig-bm2', variable: 'KUBECONFIG')]) {
-          sh '''
-            set -e
-            FULL_IMAGE="$HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG"
-            # Applique les manifests (ne touche pas aux Secrets, gérés hors pipeline).
-            kubectl apply -f kubernetes/toilettage/namespace.yaml
-            kubectl apply -f kubernetes/toilettage/configmap.yaml
-            kubectl apply -f kubernetes/toilettage/postgres-statefulset.yaml
-            kubectl apply -f kubernetes/toilettage/postgres-service.yaml
-            kubectl apply -f kubernetes/toilettage/service.yaml
-            kubectl apply -f kubernetes/toilettage/ingress.yaml
-            kubectl apply -f kubernetes/toilettage/deployment.yaml
-            # Met à jour l'image avec le tag précis de ce build.
-            kubectl -n "$K8S_NAMESPACE" set image deployment/toilettage-api api="$FULL_IMAGE"
-            kubectl -n "$K8S_NAMESPACE" rollout status deployment/toilettage-api --timeout=120s
-          '''
-        }
+        sh '''
+          set -e
+          FULL_IMAGE="$HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG"
+          # Applique les manifests (ne touche pas aux Secrets, gérés hors pipeline).
+          kubectl apply -f kubernetes/toilettage/namespace.yaml
+          kubectl apply -f kubernetes/toilettage/configmap.yaml
+          kubectl apply -f kubernetes/toilettage/postgres-statefulset.yaml
+          kubectl apply -f kubernetes/toilettage/postgres-service.yaml
+          kubectl apply -f kubernetes/toilettage/service.yaml
+          kubectl apply -f kubernetes/toilettage/ingress.yaml
+          kubectl apply -f kubernetes/toilettage/deployment.yaml
+          # Met à jour l'image avec le tag précis de ce build.
+          kubectl -n "$K8S_NAMESPACE" set image deployment/toilettage-api api="$FULL_IMAGE"
+          kubectl -n "$K8S_NAMESPACE" rollout status deployment/toilettage-api --timeout=120s
+        '''
       }
     }
 
@@ -116,7 +115,7 @@ pipeline {
       when { anyOf { branch 'dev'; branch 'main' } }
       steps {
         withCredentials([sshUserPrivateKey(
-            credentialsId: 'hestia-ssh',
+            credentialsId: 'hestia-ben-ssh',
             keyFileVariable: 'SSH_KEY',
             usernameVariable: 'SSH_USER')]) {
           sh '''
