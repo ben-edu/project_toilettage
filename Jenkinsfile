@@ -100,20 +100,32 @@ pipeline {
     stage('API — déploiement K3s') {
       when { anyOf { branch 'dev'; branch 'main' } }
       steps {
+        // Kubeconfig monté directement sur l'agent Jenkins (même méthode que
+        // les projets existants), pas un credential Jenkins.
         sh '''
-          set -e
-          FULL_IMAGE="$HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG"
-          # Applique les manifests (ne touche pas aux Secrets, gérés hors pipeline).
-          kubectl apply -f kubernetes/toilettage/namespace.yaml
-          kubectl apply -f kubernetes/toilettage/configmap.yaml
-          kubectl apply -f kubernetes/toilettage/postgres-statefulset.yaml
-          kubectl apply -f kubernetes/toilettage/postgres-service.yaml
-          kubectl apply -f kubernetes/toilettage/service.yaml
-          kubectl apply -f kubernetes/toilettage/ingress.yaml
-          kubectl apply -f kubernetes/toilettage/deployment.yaml
-          # Met à jour l'image avec le tag précis de ce build.
-          kubectl -n "$K8S_NAMESPACE" set image deployment/toilettage-api api="$FULL_IMAGE"
-          kubectl -n "$K8S_NAMESPACE" rollout status deployment/toilettage-api --timeout=120s
+            set -e
+            export KUBECONFIG=/var/lib/jenkins/.kube/config-afpa-k3s
+            FULL_IMAGE="$HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG"
+            # Applique les manifests (ne touche pas aux Secrets, gérés hors pipeline).
+            kubectl apply -f kubernetes/toilettage/namespace.yaml
+            kubectl apply -f kubernetes/toilettage/configmap.yaml
+            kubectl apply -f kubernetes/toilettage/postgres-statefulset.yaml
+            kubectl apply -f kubernetes/toilettage/postgres-service.yaml
+            kubectl apply -f kubernetes/toilettage/service.yaml
+            kubectl apply -f kubernetes/toilettage/ingress.yaml
+            kubectl apply -f kubernetes/toilettage/deployment.yaml
+
+            # Surcharge par branche la valeur ENVIRONMENT (staging vs prod).
+            kubectl -n "$K8S_NAMESPACE" set env deployment/toilettage-api \
+              ENVIRONMENT="$DEPLOY_ENV"
+
+            # Met à jour l'image avec le tag précis de ce build.
+            kubectl -n "$K8S_NAMESPACE" set image deployment/toilettage-api api="$FULL_IMAGE"
+            kubectl -n "$K8S_NAMESPACE" rollout status deployment/toilettage-api --timeout=120s
+
+            # Crée les tables + données de base si elles n'existent pas encore
+            # (idempotent : le seed ne recrée pas ce qui existe).
+            kubectl -n "$K8S_NAMESPACE" exec deploy/toilettage-api -- python -m app.seed
         '''
       }
     }
