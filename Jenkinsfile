@@ -57,14 +57,21 @@ pipeline {
 
     stage('API — tests') {
       steps {
-        dir('api') {
-          sh '''
-            python3 -m venv .venv
-            . .venv/bin/activate
-            pip install --quiet -r requirements.txt pytest
-            PYTHONPATH=. pytest -q
-          '''
-        }
+        sh '''
+          set -e
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -e PYTHONPATH=/work \
+            -v "$PWD/api:/work" \
+            -w /work \
+            python:3.12-slim \
+            sh -lc '
+              export PATH="$HOME/.local/bin:$PATH"
+              pip install --user --no-cache-dir --quiet -r requirements.txt pytest
+              pytest -q
+            '
+        '''
       }
     }
 
@@ -111,38 +118,41 @@ pipeline {
       }
     }
 
-    stage('Frontend — déploiement Hestia') {
-      when { anyOf { branch 'dev'; branch 'main' } }
-      steps {
-        withCredentials([sshUserPrivateKey(
-            credentialsId: 'hestia-ben-ssh',
-            keyFileVariable: 'SSH_KEY',
-            usernameVariable: 'SSH_USER')]) {
-          sh '''
-            set -e
-            # rsync du frontend vers le document root Hestia.
-            # --exclude='.env' : NE JAMAIS écraser le .env distant.
-            rsync -av --delete \
-              --exclude='.env' \
-              -e "ssh -i $SSH_KEY -p 2222 -o StrictHostKeyChecking=accept-new" \
-              frontend/ \
-              "$SSH_USER@$FRONTEND_HOST:$HESTIA_DOCROOT/"
-          '''
-        }
-      }
-    }
-
-    stage('Smoke test') {
-      when { anyOf { branch 'dev'; branch 'main' } }
-      steps {
-        sh '''
-          set -e
-          echo "Frontend : https://$FRONTEND_HOST"
-          curl -fsSI "https://$FRONTEND_HOST" | head -1 || echo "AVERTISSEMENT: frontend non joignable"
-          # L'API est vérifiée via son ingress public.
-        '''
-      }
-    }
+    // DÉSACTIVÉ TEMPORAIREMENT — Hestia (BM1) pas encore configuré.
+    // Réactiver quand l'utilisateur système + docroot + port SSH seront confirmés.
+    // stage('Frontend — déploiement Hestia') {
+    //   when { anyOf { branch 'dev'; branch 'main' } }
+    //   steps {
+    //     withCredentials([sshUserPrivateKey(
+    //         credentialsId: 'hestia-ben-ssh',
+    //         keyFileVariable: 'SSH_KEY',
+    //         usernameVariable: 'SSH_USER')]) {
+    //       sh '''
+    //         set -e
+    //         # rsync du frontend vers le document root Hestia.
+    //         # --exclude='.env' : NE JAMAIS écraser le .env distant.
+    //         rsync -av --delete \
+    //           --exclude='.env' \
+    //           -e "ssh -i $SSH_KEY -p 2222 -o StrictHostKeyChecking=accept-new" \
+    //           frontend/ \
+    //           "$SSH_USER@$FRONTEND_HOST:$HESTIA_DOCROOT/"
+    //       '''
+    //     }
+    //   }
+    // }
+    //
+    // DÉSACTIVÉ TEMPORAIREMENT — lié au déploiement frontend Hestia.
+    // stage('Smoke test') {
+    //   when { anyOf { branch 'dev'; branch 'main' } }
+    //   steps {
+    //     sh '''
+    //       set -e
+    //       echo "Frontend : https://$FRONTEND_HOST"
+    //       curl -fsSI "https://$FRONTEND_HOST" | head -1 || echo "AVERTISSEMENT: frontend non joignable"
+    //       # L'API est vérifiée via son ingress public.
+    //     '''
+    //   }
+    // }
   }
 
   post {
