@@ -150,7 +150,7 @@ pipeline {
             # On se connecte à la VM Hestia par son IP privée (via le réseau
             # interne / tunnel), PAS par le domaine public (qui pointe sur HAProxy).
             # --exclude='.env' : NE JAMAIS écraser un éventuel .env distant.
-            rsync -av --delete \
+            rsync -av --delete --omit-dir-times \
               --exclude='.env' \
               --exclude='.well-known' \
               -e "ssh -i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new" \
