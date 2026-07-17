@@ -40,7 +40,7 @@ pipeline {
           // VM Hestia (BM1) : accès SSH réel
           env.HESTIA_SSH_HOST = '192.168.100.75'
           env.HESTIA_SSH_PORT = '2275'
-          env.HESTIA_SSH_USER = 'ben'
+          env.HESTIA_SSH_USER = 'benweb'
           if (env.BRANCH_NAME == 'main') {
             env.DEPLOY_ENV      = 'prod'
             env.FRONTEND_HOST   = 'toilettage.proxbenovh.cloud'
@@ -150,7 +150,7 @@ pipeline {
             # On se connecte à la VM Hestia par son IP privée (via le réseau
             # interne / tunnel), PAS par le domaine public (qui pointe sur HAProxy).
             # --exclude='.env' : NE JAMAIS écraser un éventuel .env distant.
-            rsync -av --delete --omit-dir-times --no-perms \
+            rsync -av --delete \
               --exclude='.env' \
               --exclude='.well-known' \
               -e "ssh -i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new" \
