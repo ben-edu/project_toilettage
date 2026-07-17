@@ -37,15 +37,19 @@ pipeline {
     stage('Setup env / branche') {
       steps {
         script {
+          // VM Hestia (BM1) : accès SSH réel
+          env.HESTIA_SSH_HOST = '192.168.100.75'
+          env.HESTIA_SSH_PORT = '2275'
+          env.HESTIA_SSH_USER = 'benweb'
           if (env.BRANCH_NAME == 'main') {
             env.DEPLOY_ENV      = 'prod'
             env.FRONTEND_HOST   = 'toilettage.proxbenovh.cloud'
-            env.HESTIA_DOCROOT  = '/home/toilettage/web/toilettage.proxbenovh.cloud/public_html'
+            env.HESTIA_DOCROOT  = '/home/benweb/web/toilettage.proxbenovh.cloud/public_html'
             env.API_IMAGE_ALIAS = 'prod'
           } else if (env.BRANCH_NAME == 'dev') {
             env.DEPLOY_ENV      = 'staging'
             env.FRONTEND_HOST   = 'staging.toilettage.proxbenovh.cloud'
-            env.HESTIA_DOCROOT  = '/home/toilettage/web/staging.toilettage.proxbenovh.cloud/public_html'
+            env.HESTIA_DOCROOT  = '/home/benweb/web/staging.toilettage.proxbenovh.cloud/public_html'
             env.API_IMAGE_ALIAS = 'dev'
           } else {
             env.DEPLOY_ENV = 'none'   // feature/* : build + tests seulement
@@ -134,41 +138,40 @@ pipeline {
       }
     }
 
-    // DÉSACTIVÉ TEMPORAIREMENT — Hestia (BM1) pas encore configuré.
-    // Réactiver quand l'utilisateur système + docroot + port SSH seront confirmés.
-    // stage('Frontend — déploiement Hestia') {
-    //   when { anyOf { branch 'dev'; branch 'main' } }
-    //   steps {
-    //     withCredentials([sshUserPrivateKey(
-    //         credentialsId: 'hestia-ben-ssh',
-    //         keyFileVariable: 'SSH_KEY',
-    //         usernameVariable: 'SSH_USER')]) {
-    //       sh '''
-    //         set -e
-    //         # rsync du frontend vers le document root Hestia.
-    //         # --exclude='.env' : NE JAMAIS écraser le .env distant.
-    //         rsync -av --delete \
-    //           --exclude='.env' \
-    //           -e "ssh -i $SSH_KEY -p 2222 -o StrictHostKeyChecking=accept-new" \
-    //           frontend/ \
-    //           "$SSH_USER@$FRONTEND_HOST:$HESTIA_DOCROOT/"
-    //       '''
-    //     }
-    //   }
-    // }
-    //
-    // DÉSACTIVÉ TEMPORAIREMENT — lié au déploiement frontend Hestia.
-    // stage('Smoke test') {
-    //   when { anyOf { branch 'dev'; branch 'main' } }
-    //   steps {
-    //     sh '''
-    //       set -e
-    //       echo "Frontend : https://$FRONTEND_HOST"
-    //       curl -fsSI "https://$FRONTEND_HOST" | head -1 || echo "AVERTISSEMENT: frontend non joignable"
-    //       # L'API est vérifiée via son ingress public.
-    //     '''
-    //   }
-    // }
+    stage('Frontend — déploiement Hestia') {
+      when { anyOf { branch 'dev'; branch 'main' } }
+      steps {
+        withCredentials([sshUserPrivateKey(
+            credentialsId: 'hestia-ben-ssh',
+            keyFileVariable: 'SSH_KEY')]) {
+          sh '''
+            set -e
+            # rsync du frontend vers le document root Hestia.
+            # On se connecte à la VM Hestia par son IP privée (via le réseau
+            # interne / tunnel), PAS par le domaine public (qui pointe sur HAProxy).
+            # --exclude='.env' : NE JAMAIS écraser un éventuel .env distant.
+            rsync -av --delete \
+              --exclude='.env' \
+              --exclude='.well-known' \
+              -e "ssh -i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new" \
+              frontend/ \
+              "$HESTIA_SSH_USER@$HESTIA_SSH_HOST:$HESTIA_DOCROOT/"
+          '''
+        }
+      }
+    }
+
+    stage('Smoke test') {
+      when { anyOf { branch 'dev'; branch 'main' } }
+      steps {
+        sh '''
+          set -e
+          echo "Frontend : https://$FRONTEND_HOST"
+          curl -fsSI "https://$FRONTEND_HOST" | head -1 || echo "AVERTISSEMENT: frontend non joignable"
+          # L'API est vérifiée via son ingress public.
+        '''
+      }
+    }
   }
 
   post {
