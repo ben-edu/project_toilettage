@@ -40,7 +40,7 @@ pipeline {
           // VM Hestia (BM1) : accès SSH réel
           env.HESTIA_SSH_HOST = '192.168.100.75'
           env.HESTIA_SSH_PORT = '2275'
-          env.HESTIA_SSH_USER = 'benweb'
+          env.HESTIA_SSH_USER = 'ben'
           if (env.BRANCH_NAME == 'main') {
             env.DEPLOY_ENV      = 'prod'
             env.FRONTEND_HOST   = 'toilettage.proxbenovh.cloud'
