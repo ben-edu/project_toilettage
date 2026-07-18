@@ -37,7 +37,13 @@ pipeline {
     stage('Setup env / branche') {
       steps {
         script {
-          // VM Hestia (BM1) : accès SSH réel
+          // VM Hestia (BM1) : accès SSH réel.
+          // IMPORTANT : le credential Jenkins hestia-ben-ssh contient la clé de
+          // l'utilisateur "ben" (PAS "benweb"). On se connecte donc en "ben".
+          // Le docroot appartient à "benweb" ; "ben" a été ajouté au groupe
+          // benweb avec droit d'écriture sur le VM (changement persistant).
+          // Les options rsync ci-dessous (--no-perms, --omit-dir-times, --chmod)
+          // évitent les erreurs de permission déjà rencontrées.
           env.HESTIA_SSH_HOST = '192.168.100.75'
           env.HESTIA_SSH_PORT = '2275'
           env.HESTIA_SSH_USER = 'ben'
@@ -149,8 +155,16 @@ pipeline {
             # rsync du frontend vers le document root Hestia.
             # On se connecte à la VM Hestia par son IP privée (via le réseau
             # interne / tunnel), PAS par le domaine public (qui pointe sur HAProxy).
-            # --exclude='.env' : NE JAMAIS écraser un éventuel .env distant.
-            rsync -av --delete --omit-dir-times --no-perms \
+            #
+            # Options de robustesse (corrige des échecs de permission récurrents) :
+            #   --no-perms --omit-dir-times : ne pas tenter de fixer perms/dates
+            #     (l'utilisateur ben n'est pas propriétaire, seulement membre du groupe)
+            #   --chmod=D2775,F664 : dossiers et fichiers lisibles par le groupe/serveur web
+            #   --exclude='.env' : NE JAMAIS écraser un éventuel .env distant
+            #   --exclude='.well-known' : préserver les challenges ACME
+            rsync -av --delete \
+              --no-perms --omit-dir-times \
+              --chmod=D2775,F664 \
               --exclude='.env' \
               --exclude='.well-known' \
               -e "ssh -i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new" \

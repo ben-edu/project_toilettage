@@ -31,16 +31,16 @@ _ADVISORY_LOCK_ID = 918273645
 DEFAULT_SERVICES = [
     dict(slug="bain", name="Bain (shampooing)",
          description="Shampooing adapté, rinçage et séchage.",
-         duration_minutes=45, sort_order=1),
+         duration_minutes=45, price_cents=3500, sort_order=1),
     dict(slug="tonte", name="Tonte / toilettage",
          description="Coupe et mise en forme du pelage selon la race.",
-         duration_minutes=75, sort_order=2),
+         duration_minutes=75, price_cents=4500, sort_order=2),
     dict(slug="detartrage", name="Détartrage dentaire à la pince",
          description="Détartrage mécanique doux à la pince.",
-         duration_minutes=30, sort_order=3),
+         duration_minutes=30, price_cents=2000, sort_order=3),
     dict(slug="forfait-complet", name="Forfait complet (bain + tonte)",
          description="Bain complet suivi d'une tonte/toilettage.",
-         duration_minutes=105, sort_order=4),
+         duration_minutes=105, price_cents=6000, sort_order=4),
 ]
 
 DEFAULT_COEFFICIENTS = [
@@ -83,6 +83,11 @@ def seed() -> None:
             ).scalar_one_or_none()
             if not exists:
                 db.add(Service(**svc))
+            else:
+                # Mise à jour des tarifs/durées de référence si l'admin ne les a
+                # pas encore personnalisés (price_cents à 0 = non renseigné).
+                if not exists.price_cents:
+                    exists.price_cents = svc["price_cents"]
 
         for wd, start, end in DEFAULT_HOURS:
             exists = db.execute(
