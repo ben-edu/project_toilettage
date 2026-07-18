@@ -42,7 +42,8 @@ class Settings(BaseSettings):
     # Liste d'origines autorisées, séparées par des virgules.
     cors_origins: str = Field(
         default="https://toilettage.proxbenovh.cloud,"
-        "https://staging.toilettage.proxbenovh.cloud"
+        "https://staging.toilettage.proxbenovh.cloud,"
+        "https://admin.toilettage.proxbenovh.cloud"
     )
 
     @property
