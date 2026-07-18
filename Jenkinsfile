@@ -37,16 +37,28 @@ pipeline {
     stage('Setup env / branche') {
       steps {
         script {
-          // VM Hestia (BM1) : accès SSH réel.
-          // IMPORTANT : le credential Jenkins hestia-ben-ssh contient la clé de
-          // l'utilisateur "ben" (PAS "benweb"). On se connecte donc en "ben".
-          // Le docroot appartient à "benweb" ; "ben" a été ajouté au groupe
-          // benweb avec droit d'écriture sur le VM (changement persistant).
-          // Les options rsync ci-dessous (--no-perms, --omit-dir-times, --chmod)
-          // évitent les erreurs de permission déjà rencontrées.
+          // VM Hestia (BM1) — accès SSH.
+          //
+          // SOLUTION DE FOND (ne plus modifier) :
+          // On se connecte avec l'utilisateur PROPRIÉTAIRE du docroot, "benweb".
+          // C'est le fonctionnement prévu par HestiaCP : l'utilisateur web est
+          // propriétaire de ses fichiers, donc aucun bricolage de permissions
+          // (chmod/chown/groupe) n'est nécessaire.
+          //
+          // Pourquoi l'ancienne approche (user "ben" + groupe + chmod) échouait :
+          // HestiaCP réinitialise propriétaire et permissions du docroot à chaque
+          // v-rebuild-web-domain (renouvellement SSL, modification du domaine,
+          // mise à jour Hestia). Tout chmod manuel finit donc par disparaître.
+          //
+          // Prérequis côté VM Hestia (faits une fois, persistants) :
+          //   - v-change-user-shell benweb bash
+          //   - clé publique Jenkins dans /home/benweb/.ssh/authorized_keys
+          //   - benweb autorisé dans sshd_config si AllowUsers est utilisé
+          // Prérequis côté Jenkins :
+          //   - credential SSH id="hestia-benweb-ssh", username=benweb
           env.HESTIA_SSH_HOST = '192.168.100.75'
           env.HESTIA_SSH_PORT = '2275'
-          env.HESTIA_SSH_USER = 'ben'
+          env.HESTIA_SSH_USER = 'benweb'
           if (env.BRANCH_NAME == 'main') {
             env.DEPLOY_ENV      = 'prod'
             env.FRONTEND_HOST   = 'toilettage.proxbenovh.cloud'
@@ -148,26 +160,44 @@ pipeline {
       when { anyOf { branch 'dev'; branch 'main' } }
       steps {
         withCredentials([sshUserPrivateKey(
-            credentialsId: 'hestia-ben-ssh',
+            credentialsId: 'hestia-benweb-ssh',
             keyFileVariable: 'SSH_KEY')]) {
           sh '''
             set -e
-            # rsync du frontend vers le document root Hestia.
-            # On se connecte à la VM Hestia par son IP privée (via le réseau
-            # interne / tunnel), PAS par le domaine public (qui pointe sur HAProxy).
+            SSH_OPTS="-i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+
+            # --- Contrôle préalable : connexion + droit d'écriture réel ---
+            # Diagnostic clair si la configuration Hestia a été réinitialisée.
+            echo "Vérification de l'accès à $HESTIA_DOCROOT ..."
+            ssh $SSH_OPTS "$HESTIA_SSH_USER@$HESTIA_SSH_HOST" "
+              set -e
+              if [ ! -d '$HESTIA_DOCROOT' ]; then
+                echo 'ERREUR : le document root est introuvable.'
+                echo 'Le domaine existe-t-il bien dans HestiaCP ?'
+                exit 1
+              fi
+              if ! touch '$HESTIA_DOCROOT/.deploy_write_test' 2>/dev/null; then
+                echo 'ERREUR : pas de droit d écriture sur le document root.'
+                echo 'Utilisateur SSH : '\\$(whoami)
+                ls -ld '$HESTIA_DOCROOT'
+                exit 1
+              fi
+              rm -f '$HESTIA_DOCROOT/.deploy_write_test'
+              echo 'Accès en écriture confirmé (utilisateur '\\$(whoami)').'
+            "
+
+            # --- Synchronisation ---
+            # On se connecte par l'IP privée de la VM Hestia (réseau interne),
+            # PAS par le domaine public qui pointe sur HAProxy.
             #
-            # Options de robustesse (corrige des échecs de permission récurrents) :
-            #   --no-perms --no-group --omit-dir-times : ne pas tenter de fixer
-            #     perms/group/dates (ben n'est pas propriétaire, seulement membre du groupe)
-            #   --chmod=D2775,F664 : dossiers et fichiers lisibles par le groupe/serveur web
-            #   --exclude='.env' : NE JAMAIS écraser un éventuel .env distant
+            # benweb étant propriétaire du docroot, aucune option de contournement
+            # de permissions n'est nécessaire.
+            #   --exclude='.env'        : ne jamais écraser un .env distant
             #   --exclude='.well-known' : préserver les challenges ACME
             rsync -av --delete \
-              --no-perms --no-group --omit-dir-times \
-              --chmod=D2775,F664 \
               --exclude='.env' \
               --exclude='.well-known' \
-              -e "ssh -i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new" \
+              -e "ssh $SSH_OPTS" \
               frontend/ \
               "$HESTIA_SSH_USER@$HESTIA_SSH_HOST:$HESTIA_DOCROOT/"
           '''
