@@ -12,7 +12,7 @@ data:
   POSTGRES_HOST: "toilettage-db"
   POSTGRES_PORT: "5432"
   POSTGRES_DB: "toilettage"
-  CORS_ORIGINS: "https://toilettage.proxbenovh.cloud,https://staging.toilettage.proxbenovh.cloud"
+  CORS_ORIGINS: "https://toilettage.proxbenovh.cloud,https://staging.toilettage.proxbenovh.cloud,https://admin.toilettage.proxbenovh.cloud"
   # Zone de service
   SERVICE_CENTER_LAT: "47.9027"
   SERVICE_CENTER_LNG: "1.9086"

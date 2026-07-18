@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administration — Toutou à Domicile</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --olive:#6B7B4A;--olive-deep:#4F5C34;--olive-soft:#DCE3C9;
+    --cream:#FBF8F0;--peach:#F6D9C0;--ink:#38402B;--ink-soft:#6E7360;--white:#fff;
+    --shadow:rgba(79,92,52,.14);
+    --ok:#3F7D4E;--ok-bg:#DDEEDF;--warn:#8A6A22;--warn-bg:#FBEED9;
+    --err:#A6402E;--err-bg:#FBE3DE;--mute:#6E7360;--mute-bg:#E9E7DD;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.2}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  .btn{display:inline-flex;align-items:center;gap:.4em;font-weight:800;font-size:.95rem;
+    padding:11px 22px;border-radius:999px;border:2px solid transparent;transition:.15s}
+  .btn-primary{background:var(--olive);color:var(--white)}
+  .btn-primary:hover{background:var(--olive-deep)}
+  .btn-ghost{background:transparent;color:var(--olive-deep);border-color:var(--olive-soft)}
+  .btn-ghost:hover{background:var(--olive-soft)}
+  .btn-sm{padding:7px 15px;font-size:.85rem}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+
+  /* Écran de connexion */
+  #login-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
+  .login-card{background:var(--white);border-radius:28px;padding:44px 38px;max-width:420px;
+    width:100%;text-align:center;box-shadow:0 24px 50px var(--shadow);border:1px solid var(--olive-soft)}
+  .login-card .paw{width:64px;height:64px;background:var(--olive);border-radius:50%;
+    display:grid;place-items:center;color:var(--white);margin:0 auto 20px}
+  .login-card h1{font-size:1.6rem;margin-bottom:8px}
+  .login-card p{color:var(--ink-soft);margin-bottom:26px}
+
+  /* Application */
+  #app{display:none}
+  header{background:var(--white);border-bottom:1px solid var(--olive-soft);position:sticky;top:0;z-index:20}
+  .head{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:600;
+    font-size:1.15rem;color:var(--olive-deep)}
+  .brand .paw{width:34px;height:34px;background:var(--olive);border-radius:50%;
+    display:grid;place-items:center;color:var(--white);flex:none}
+  .user-box{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--ink-soft);font-weight:700}
+
+  nav.tabs{background:var(--white);border-bottom:1px solid var(--olive-soft);
+    position:sticky;top:68px;z-index:19}
+  .tabs-inner{display:flex;gap:6px;overflow-x:auto}
+  .tab{background:none;border:none;padding:15px 20px;font-weight:800;font-size:.95rem;
+    color:var(--ink-soft);border-bottom:3px solid transparent;white-space:nowrap}
+  .tab:hover{color:var(--olive-deep)}
+  .tab.active{color:var(--olive-deep);border-bottom-color:var(--olive)}
+
+  main{padding:30px 0 70px}
+  .panel{display:none}
+  .panel.active{display:block}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    flex-wrap:wrap;margin-bottom:22px}
+  .panel-head h2{font-size:1.5rem}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--white);border:2px solid var(--olive-soft);border-radius:999px;
+    padding:8px 16px;font-weight:700;font-size:.87rem;color:var(--ink-soft)}
+  .chip:hover{border-color:var(--olive)}
+  .chip.active{background:var(--olive);border-color:var(--olive);color:var(--white)}
+
+  .card{background:var(--white);border:1px solid var(--olive-soft);border-radius:20px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:0 6px 18px var(--shadow)}
+  .bk-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .bk-when{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:600;color:var(--olive-deep)}
+  .bk-svc{font-weight:800;margin-top:2px}
+  .bk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:10px 20px;margin-top:14px;padding-top:14px;border-top:1px solid var(--olive-soft)}
+  .bk-item{font-size:.9rem}
+  .bk-item .k{color:var(--ink-soft);font-weight:700;display:block;font-size:.78rem;
+    text-transform:uppercase;letter-spacing:.04em}
+  .bk-item .v{font-weight:700}
+  .bk-item a{color:var(--olive-deep)}
+  .bk-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+
+  .badge{display:inline-block;padding:5px 13px;border-radius:999px;font-size:.78rem;font-weight:800;
+    text-transform:uppercase;letter-spacing:.03em}
+  .badge.pending{background:var(--warn-bg);color:var(--warn)}
+  .badge.confirmed{background:var(--ok-bg);color:var(--ok)}
+  .badge.cancelled{background:var(--err-bg);color:var(--err)}
+  .badge.completed{background:var(--mute-bg);color:var(--mute)}
+
+  table{width:100%;border-collapse:collapse;background:var(--white);
+    border-radius:20px;overflow:hidden;box-shadow:0 6px 18px var(--shadow)}
+  th{background:var(--olive-soft);color:var(--olive-deep);text-align:left;padding:13px 16px;
+    font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+  td{padding:12px 16px;border-top:1px solid var(--olive-soft);font-size:.93rem}
+  td input[type=text],td input[type=number],td input[type=time]{
+    width:100%;padding:8px 11px;border:2px solid var(--olive-soft);border-radius:10px;
+    font-family:inherit;font-size:.9rem;background:var(--cream);color:var(--ink)}
+  td input:focus{outline:none;border-color:var(--olive)}
+  .num{max-width:110px}
+  .sw{position:relative;display:inline-block;width:46px;height:26px;flex:none}
+  .sw input{opacity:0;width:0;height:0}
+  .sw span{position:absolute;inset:0;background:#CFCFC4;border-radius:26px;transition:.2s}
+  .sw span:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;
+    background:#fff;border-radius:50%;transition:.2s}
+  .sw input:checked + span{background:var(--olive)}
+  .sw input:checked + span:before{transform:translateX(20px)}
+
+  .msg{padding:13px 17px;border-radius:14px;font-weight:700;font-size:.92rem;margin-bottom:18px}
+  .msg.ok{background:var(--ok-bg);color:var(--ok)}
+  .msg.err{background:var(--err-bg);color:var(--err)}
+  .msg.info{background:var(--warn-bg);color:var(--warn)}
+  .empty{text-align:center;padding:56px 20px;color:var(--ink-soft)}
+  .empty .ic{font-size:2.6rem;display:block;margin-bottom:10px}
+  .spinner{width:26px;height:26px;border:3px solid var(--olive-soft);border-top-color:var(--olive);
+    border-radius:50%;animation:spin .7s linear infinite;margin:44px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--olive-deep);
+    color:var(--white);padding:13px 26px;border-radius:999px;font-weight:800;font-size:.92rem;
+    box-shadow:0 12px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+  .stat{background:var(--white);border:1px solid var(--olive-soft);border-radius:18px;padding:18px 20px}
+  .stat .n{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:600;color:var(--olive-deep)}
+  .stat .l{font-size:.83rem;color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  @media(max-width:700px){
+    .head{height:auto;padding:12px 0;flex-wrap:wrap}
+    table,thead,tbody,th,td,tr{display:block}
+    thead{display:none}
+    tr{border-top:1px solid var(--olive-soft);padding:12px 4px}
+    td{border:none;padding:7px 12px;display:flex;justify-content:space-between;
+      align-items:center;gap:12px}
+    td:before{content:attr(data-label);font-weight:800;font-size:.78rem;
+      text-transform:uppercase;color:var(--ink-soft)}
+  }
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN DE CONNEXION -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="paw" aria-hidden="true">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="9" r="2.1"/><circle cx="12" cy="6.4" r="2.3"/><circle cx="18" cy="9" r="2.1"/><path d="M12 11c-3 0-5.4 2.3-5.4 4.7 0 1.9 1.6 2.8 3 2.8 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c1.4 0 3-.9 3-2.8C17.4 13.3 15 11 12 11z"/></svg>
+    </div>
+    <h1>Administration</h1>
+    <p>Toutou à Domicile — espace réservé au toiletteur.</p>
+    <div id="login-msg"></div>
+    <button class="btn btn-primary" id="login-btn">Se connecter</button>
+  </div>
+</div>
+
+<!-- APPLICATION -->
+<div id="app">
+  <header>
+    <div class="wrap head">
+      <div class="brand">
+        <span class="paw" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="9" r="2.1"/><circle cx="12" cy="6.4" r="2.3"/><circle cx="18" cy="9" r="2.1"/><path d="M12 11c-3 0-5.4 2.3-5.4 4.7 0 1.9 1.6 2.8 3 2.8 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c1.4 0 3-.9 3-2.8C17.4 13.3 15 11 12 11z"/></svg>
+        </span>
+        Toutou à Domicile
+      </div>
+      <div class="user-box">
+        <span id="user-name"></span>
+        <button class="btn btn-ghost btn-sm" id="logout-btn">Déconnexion</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <div class="wrap tabs-inner">
+      <button class="tab active" data-tab="bookings">Réservations</button>
+      <button class="tab" data-tab="services">Prestations</button>
+      <button class="tab" data-tab="hours">Horaires</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <!-- RÉSERVATIONS -->
+    <section class="panel active" data-panel="bookings">
+      <div class="stats" id="stats"></div>
+      <div class="panel-head">
+        <h2>Réservations</h2>
+        <div class="filters" id="status-filters">
+          <button class="chip active" data-status="">Toutes</button>
+          <button class="chip" data-status="pending">En attente</button>
+          <button class="chip" data-status="confirmed">Confirmées</button>
+          <button class="chip" data-status="completed">Terminées</button>
+          <button class="chip" data-status="cancelled">Annulées</button>
+        </div>
+      </div>
+      <div id="bookings-msg"></div>
+      <div id="bookings-list"><div class="spinner"></div></div>
+    </section>
+
+    <!-- PRESTATIONS -->
+    <section class="panel" data-panel="services">
+      <div class="panel-head">
+        <h2>Prestations</h2>
+        <button class="btn btn-primary btn-sm" id="add-service-btn">+ Ajouter</button>
+      </div>
+      <div id="services-msg"></div>
+      <div id="services-list"><div class="spinner"></div></div>
+    </section>
+
+    <!-- HORAIRES -->
+    <section class="panel" data-panel="hours">
+      <div class="panel-head">
+        <h2>Horaires de travail</h2>
+      </div>
+      <div id="hours-msg"></div>
+      <div id="hours-list"><div class="spinner"></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Configuration
+   ============================================================ */
+const CFG = {
+  keycloakUrl: 'https://keycloak.soria-academie.fr',
+  realm:       'toilettage',
+  clientId:    'toilettage-admin',
+  apiBase:     'https://api.toilettage.proxbenovh.cloud/api/v1'
+};
+const KC = `${CFG.keycloakUrl}/realms/${CFG.realm}/protocol/openid-connect`;
+const REDIRECT_URI = location.origin + location.pathname;
+
+/* ============================================================
+   Authentification OIDC — Authorization Code + PKCE
+   Le client Keycloak est public avec PKCE S256 : aucun secret
+   n'est stocké côté navigateur.
+   ============================================================ */
+let auth = { token: null, refresh: null, expiresAt: 0, profile: null };
+
+function b64url(buf){
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function randomString(len=64){
+  const a = new Uint8Array(len);
+  crypto.getRandomValues(a);
+  return Array.from(a, b => ('0'+b.toString(16)).slice(-2)).join('').slice(0,len);
+}
+async function sha256(str){
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+}
+
+async function login(){
+  const verifier = randomString(64);
+  const state = randomString(24);
+  sessionStorage.setItem('pkce_verifier', verifier);
+  sessionStorage.setItem('oidc_state', state);
+  const challenge = b64url(await sha256(verifier));
+  const params = new URLSearchParams({
+    client_id: CFG.clientId,
+    redirect_uri: REDIRECT_URI,
+    response_type: 'code',
+    scope: 'openid profile email',
+    state,
+    code_challenge: challenge,
+    code_challenge_method: 'S256'
+  });
+  location.href = `${KC}/auth?${params}`;
+}
+
+async function handleCallback(){
+  const q = new URLSearchParams(location.search);
+  const code = q.get('code');
+  if (!code) return false;
+
+  if (q.get('state') !== sessionStorage.getItem('oidc_state')) {
+    showLoginError("Échec de la vérification de sécurité. Réessayez.");
+    history.replaceState({}, '', REDIRECT_URI);
+    return false;
+  }
+  const verifier = sessionStorage.getItem('pkce_verifier');
+  history.replaceState({}, '', REDIRECT_URI);   // nettoyer l'URL
+
+  try {
+    const res = await fetch(`${KC}/token`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: CFG.clientId,
+        code, redirect_uri: REDIRECT_URI, code_verifier: verifier
+      })
+    });
+    if (!res.ok) throw new Error('token');
+    storeTokens(await res.json());
+    sessionStorage.removeItem('pkce_verifier');
+    sessionStorage.removeItem('oidc_state');
+    return true;
+  } catch {
+    showLoginError("La connexion a échoué. Réessayez.");
+    return false;
+  }
+}
+
+function storeTokens(data){
+  auth.token = data.access_token;
+  auth.refresh = data.refresh_token;
+  auth.expiresAt = Date.now() + (data.expires_in - 30) * 1000;
+  try {
+    auth.profile = JSON.parse(atob(data.access_token.split('.')[1]));
+  } catch { auth.profile = null; }
+  sessionStorage.setItem('kc_refresh', data.refresh_token || '');
+}
+
+async function refreshTokens(){
+  const rt = auth.refresh || sessionStorage.getItem('kc_refresh');
+  if (!rt) return false;
+  try {
+    const res = await fetch(`${KC}/token`, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        grant_type:'refresh_token', client_id: CFG.clientId, refresh_token: rt
+      })
+    });
+    if (!res.ok) return false;
+    storeTokens(await res.json());
+    return true;
+  } catch { return false; }
+}
+
+function logout(){
+  const rt = auth.refresh;
+  auth = { token:null, refresh:null, expiresAt:0, profile:null };
+  sessionStorage.clear();
+  const params = new URLSearchParams({
+    client_id: CFG.clientId,
+    post_logout_redirect_uri: REDIRECT_URI
+  });
+  if (rt) params.set('refresh_token', rt);
+  location.href = `${KC}/logout?${params}`;
+}
+
+/* Appel API authentifié (rafraîchit le token si nécessaire) */
+async function api(path, options = {}){
+  if (Date.now() > auth.expiresAt) {
+    if (!await refreshTokens()) { showLogin(); throw new Error('session expirée'); }
+  }
+  const res = await fetch(CFG.apiBase + path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + auth.token,
+      ...(options.headers || {})
+    }
+  });
+  if (res.status === 401) { showLogin(); throw new Error('non autorisé'); }
+  if (!res.ok) {
+    let detail = 'Erreur ' + res.status;
+    try { const j = await res.json(); detail = j.detail || detail; } catch {}
+    throw new Error(detail);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+/* ============================================================
+   Utilitaires d'affichage
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const fmtDate = iso => new Date(iso).toLocaleDateString('fr-FR',
+  {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+const fmtTime = iso => new Date(iso).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STATUS_LABEL = {pending:'En attente', confirmed:'Confirmée',
+                      cancelled:'Annulée', completed:'Terminée'};
+const DAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+
+function toast(text){
+  const t = $('#toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+function msg(id, text, type='info'){
+  $(id).innerHTML = text ? `<div class="msg ${type}">${esc(text)}</div>` : '';
+}
+function showLoginError(text){
+  $('#login-msg').innerHTML = `<div class="msg err">${esc(text)}</div>`;
+}
+function showLogin(){
+  $('#login-screen').style.display = 'grid';
+  $('#app').style.display = 'none';
+}
+function showApp(){
+  $('#login-screen').style.display = 'none';
+  $('#app').style.display = 'block';
+  const p = auth.profile || {};
+  $('#user-name').textContent = p.name || p.preferred_username || '';
+}
+
+/* ============================================================
+   Onglets
+   ============================================================ */
+document.querySelectorAll('.tab').forEach(t =>
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelector(`.panel[data-panel="${t.dataset.tab}"]`).classList.add('active');
+    if (t.dataset.tab === 'services') loadServices();
+    if (t.dataset.tab === 'hours') loadHours();
+  })
+);
+
+/* ============================================================
+   Réservations
+   ============================================================ */
+let servicesCache = [];
+let currentStatus = '';
+
+document.querySelectorAll('#status-filters .chip').forEach(c =>
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#status-filters .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentStatus = c.dataset.status;
+    loadBookings();
+  })
+);
+
+async function loadBookings(){
+  const box = $('#bookings-list');
+  box.innerHTML = '<div class="spinner"></div>';
+  msg('#bookings-msg','');
+  try {
+    if (!servicesCache.length) servicesCache = await api('/admin/services');
+    const qs = currentStatus ? `?status_filter=${currentStatus}` : '';
+    const list = await api('/admin/bookings' + qs);
+    renderStats(list);
+
+    if (!list.length){
+      box.innerHTML = `<div class="empty"><span class="ic">📭</span>
+        Aucune réservation ${currentStatus ? 'avec ce statut' : 'pour le moment'}.</div>`;
+      return;
+    }
+    box.innerHTML = list.map(b => {
+      const svc = servicesCache.find(s => s.id === b.service_id);
+      return `
+      <article class="card">
+        <div class="bk-top">
+          <div>
+            <div class="bk-when">${esc(fmtDate(b.start_at))} · ${esc(fmtTime(b.start_at))} – ${esc(fmtTime(b.end_at))}</div>
+            <div class="bk-svc">${esc(svc ? svc.name : 'Prestation #'+b.service_id)}
+              <span style="font-weight:600;color:var(--ink-soft)">· chien ${esc(b.dog_size)}${b.dog_name ? ' · '+esc(b.dog_name) : ''}</span></div>
+          </div>
+          <span class="badge ${esc(b.status)}">${esc(STATUS_LABEL[b.status] || b.status)}</span>
+        </div>
+        <div class="bk-grid">
+          <div class="bk-item"><span class="k">Client</span><span class="v">${esc(b.customer_name)}</span></div>
+          <div class="bk-item"><span class="k">Téléphone</span><span class="v"><a href="tel:${esc(b.customer_phone)}">${esc(b.customer_phone||'—')}</a></span></div>
+          <div class="bk-item"><span class="k">Email</span><span class="v"><a href="mailto:${esc(b.customer_email)}">${esc(b.customer_email)}</a></span></div>
+          <div class="bk-item"><span class="k">Durée</span><span class="v">${esc(b.effective_duration_minutes)} min</span></div>
+          <div class="bk-item" style="grid-column:1/-1"><span class="k">Adresse</span>
+            <span class="v"><a href="https://www.openstreetmap.org/?mlat=${esc(b.latitude)}&mlon=${esc(b.longitude)}#map=17/${esc(b.latitude)}/${esc(b.longitude)}"
+              target="_blank" rel="noopener">${esc(b.address)}</a>
+              <span style="color:var(--ink-soft);font-weight:600"> · ${esc(b.distance_km)} km</span></span></div>
+        </div>
+        <div class="bk-actions">
+          ${b.status !== 'confirmed' && b.status !== 'completed' ?
+            `<button class="btn btn-primary btn-sm" data-act="confirmed" data-id="${b.id}">Confirmer</button>` : ''}
+          ${b.status === 'confirmed' ?
+            `<button class="btn btn-primary btn-sm" data-act="completed" data-id="${b.id}">Marquer terminée</button>` : ''}
+          ${b.status !== 'cancelled' ?
+            `<button class="btn btn-ghost btn-sm" data-act="cancelled" data-id="${b.id}">Annuler</button>` : ''}
+        </div>
+      </article>`;
+    }).join('');
+
+    box.querySelectorAll('[data-act]').forEach(btn =>
+      btn.addEventListener('click', () => setStatus(+btn.dataset.id, btn.dataset.act, btn))
+    );
+  } catch(e){
+    box.innerHTML = '';
+    msg('#bookings-msg', e.message, 'err');
+  }
+}
+
+function renderStats(list){
+  const c = s => list.filter(b => b.status === s).length;
+  const upcoming = list.filter(b =>
+    new Date(b.start_at) > new Date() && b.status !== 'cancelled').length;
+  $('#stats').innerHTML = `
+    <div class="stat"><div class="n">${list.length}</div><div class="l">Affichées</div></div>
+    <div class="stat"><div class="n">${c('pending')}</div><div class="l">En attente</div></div>
+    <div class="stat"><div class="n">${c('confirmed')}</div><div class="l">Confirmées</div></div>
+    <div class="stat"><div class="n">${upcoming}</div><div class="l">À venir</div></div>`;
+}
+
+async function setStatus(id, status, btn){
+  if (status === 'cancelled' && !confirm('Annuler cette réservation ?')) return;
+  btn.disabled = true;
+  try {
+    await api(`/admin/bookings/${id}`, {method:'PATCH', body: JSON.stringify({status})});
+    toast('Réservation mise à jour');
+    loadBookings();
+  } catch(e){
+    msg('#bookings-msg', e.message, 'err');
+    btn.disabled = false;
+  }
+}
+
+/* ============================================================
+   Prestations
+   ============================================================ */
+async function loadServices(){
+  const box = $('#services-list');
+  box.innerHTML = '<div class="spinner"></div>';
+  msg('#services-msg','');
+  try {
+    servicesCache = await api('/admin/services');
+    box.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Nom</th><th>Durée (min)</th><th>Tarif (€)</th><th>Ordre</th><th>Active</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${servicesCache.map(s => `
+            <tr data-id="${s.id}">
+              <td data-label="Nom"><input type="text" data-f="name" value="${esc(s.name)}"></td>
+              <td data-label="Durée"><input class="num" type="number" min="5" max="600" data-f="duration_minutes" value="${esc(s.duration_minutes)}"></td>
+              <td data-label="Tarif"><input class="num" type="number" min="0" step="1" data-f="price_euros" value="${(s.price_cents/100).toFixed(0)}"></td>
+              <td data-label="Ordre"><input class="num" type="number" data-f="sort_order" value="${esc(s.sort_order)}"></td>
+              <td data-label="Active"><label class="sw"><input type="checkbox" data-f="active" ${s.active ? 'checked':''}><span></span></label></td>
+              <td data-label=""><button class="btn btn-primary btn-sm" data-save="${s.id}">Enregistrer</button></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+    box.querySelectorAll('[data-save]').forEach(b =>
+      b.addEventListener('click', () => saveService(+b.dataset.save, b))
+    );
+  } catch(e){
+    box.innerHTML = '';
+    msg('#services-msg', e.message, 'err');
+  }
+}
+
+async function saveService(id, btn){
+  const row = btn.closest('tr');
+  const get = f => row.querySelector(`[data-f="${f}"]`);
+  const payload = {
+    name: get('name').value.trim(),
+    duration_minutes: +get('duration_minutes').value,
+    price_cents: Math.round(+get('price_euros').value * 100),
+    sort_order: +get('sort_order').value,
+    active: get('active').checked
+  };
+  if (!payload.name){ msg('#services-msg','Le nom est obligatoire.','err'); return; }
+  btn.disabled = true;
+  try {
+    await api(`/admin/services/${id}`, {method:'PATCH', body: JSON.stringify(payload)});
+    toast('Prestation enregistrée');
+    servicesCache = [];
+  } catch(e){ msg('#services-msg', e.message, 'err'); }
+  btn.disabled = false;
+}
+
+$('#add-service-btn').addEventListener('click', async () => {
+  const name = prompt('Nom de la nouvelle prestation :');
+  if (!name) return;
+  const slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,64);
+  const duration = parseInt(prompt('Durée de base en minutes :', '60'), 10);
+  if (!duration || duration <= 0) return;
+  const euros = parseFloat(prompt('Tarif de départ en euros :', '40')) || 0;
+  try {
+    await api('/admin/services', {method:'POST', body: JSON.stringify({
+      slug, name: name.trim(), description:'', duration_minutes: duration,
+      price_cents: Math.round(euros*100), active: true,
+      sort_order: servicesCache.length + 1
+    })});
+    toast('Prestation créée');
+    servicesCache = [];
+    loadServices();
+  } catch(e){ msg('#services-msg', e.message, 'err'); }
+});
+
+/* ============================================================
+   Horaires
+   ============================================================ */
+async function loadHours(){
+  const box = $('#hours-list');
+  box.innerHTML = '<div class="spinner"></div>';
+  msg('#hours-msg','');
+  try {
+    const hours = await api('/admin/working-hours');
+    const byDay = {};
+    hours.forEach(h => byDay[h.weekday] = h);
+    box.innerHTML = `
+      <table>
+        <thead><tr><th>Jour</th><th>Début</th><th>Fin</th><th>Actif</th><th></th></tr></thead>
+        <tbody>
+          ${DAYS.map((d, i) => {
+            const h = byDay[i];
+            return `<tr data-day="${i}">
+              <td data-label="Jour"><strong>${d}</strong></td>
+              <td data-label="Début"><input type="time" data-f="start_time" value="${h ? esc(h.start_time.slice(0,5)) : '09:00'}"></td>
+              <td data-label="Fin"><input type="time" data-f="end_time" value="${h ? esc(h.end_time.slice(0,5)) : '18:00'}"></td>
+              <td data-label="Actif"><label class="sw"><input type="checkbox" data-f="active" ${h && h.active ? 'checked':''}><span></span></label></td>
+              <td data-label=""><button class="btn btn-primary btn-sm" data-save-day="${i}">Enregistrer</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <p style="margin-top:16px;color:var(--ink-soft);font-size:.92rem">
+        Les créneaux proposés aux clients sont calculés à partir de ces horaires,
+        de la durée de la prestation et du temps de déplacement.</p>`;
+    box.querySelectorAll('[data-save-day]').forEach(b =>
+      b.addEventListener('click', () => saveDay(+b.dataset.saveDay, b))
+    );
+  } catch(e){
+    box.innerHTML = '';
+    msg('#hours-msg', e.message, 'err');
+  }
+}
+
+async function saveDay(weekday, btn){
+  const row = btn.closest('tr');
+  const get = f => row.querySelector(`[data-f="${f}"]`);
+  const start = get('start_time').value, end = get('end_time').value;
+  if (start >= end){ msg('#hours-msg',"L'heure de fin doit être après l'heure de début.",'err'); return; }
+  btn.disabled = true;
+  try {
+    await api(`/admin/working-hours/${weekday}`, {method:'PUT', body: JSON.stringify({
+      weekday, start_time: start + ':00', end_time: end + ':00', active: get('active').checked
+    })});
+    toast(DAYS[weekday] + ' enregistré');
+    msg('#hours-msg','');
+  } catch(e){ msg('#hours-msg', e.message, 'err'); }
+  btn.disabled = false;
+}
+
+/* ============================================================
+   Démarrage
+   ============================================================ */
+$('#login-btn').addEventListener('click', login);
+$('#logout-btn').addEventListener('click', logout);
+
+(async function init(){
+  const q = new URLSearchParams(location.search);
+  if (q.get('error')) {
+    showLoginError(q.get('error_description') || "La connexion a été refusée.");
+    history.replaceState({}, '', REDIRECT_URI);
+    return;
+  }
+  if (await handleCallback()) { showApp(); loadBookings(); return; }
+  // Session encore valide (retour sur la page) ?
+  if (sessionStorage.getItem('kc_refresh') && await refreshTokens()) {
+    showApp(); loadBookings(); return;
+  }
+  showLogin();
+})();
+</script>
+</body>
+</html>

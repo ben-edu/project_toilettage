@@ -63,6 +63,8 @@ pipeline {
             env.DEPLOY_ENV      = 'prod'
             env.FRONTEND_HOST   = 'toilettage.proxbenovh.cloud'
             env.HESTIA_DOCROOT  = '/home/benweb/web/toilettage.proxbenovh.cloud/public_html'
+            env.ADMIN_HOST      = 'admin.toilettage.proxbenovh.cloud'
+            env.ADMIN_DOCROOT   = '/home/benweb/web/admin.toilettage.proxbenovh.cloud/public_html'
             env.API_IMAGE_ALIAS = 'prod'
           } else if (env.BRANCH_NAME == 'dev') {
             env.DEPLOY_ENV      = 'staging'
@@ -200,6 +202,38 @@ pipeline {
               -e "ssh $SSH_OPTS" \
               frontend/ \
               "$HESTIA_SSH_USER@$HESTIA_SSH_HOST:$HESTIA_DOCROOT/"
+          '''
+        }
+      }
+    }
+
+    stage('Panneau admin — déploiement Hestia') {
+      // Un seul domaine admin existe (pas de staging) : déployé depuis main.
+      when { branch 'main' }
+      steps {
+        withCredentials([sshUserPrivateKey(
+            credentialsId: 'hestia-benweb-ssh',
+            keyFileVariable: 'SSH_KEY')]) {
+          sh '''
+            set -e
+            SSH_OPTS="-i $SSH_KEY -p $HESTIA_SSH_PORT -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+
+            ssh $SSH_OPTS "$HESTIA_SSH_USER@$HESTIA_SSH_HOST" "
+              set -e
+              if [ ! -d '$ADMIN_DOCROOT' ]; then
+                echo 'ERREUR : document root admin introuvable.'
+                echo 'Le domaine $ADMIN_HOST existe-t-il dans HestiaCP ?'
+                exit 1
+              fi
+              echo 'Document root admin accessible.'
+            "
+
+            rsync -av --delete \
+              --exclude='.env' \
+              --exclude='.well-known' \
+              -e "ssh $SSH_OPTS" \
+              admin/ \
+              "$HESTIA_SSH_USER@$HESTIA_SSH_HOST:$ADMIN_DOCROOT/"
           '''
         }
       }
