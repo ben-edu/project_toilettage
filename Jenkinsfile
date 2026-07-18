@@ -157,13 +157,13 @@ pipeline {
             # interne / tunnel), PAS par le domaine public (qui pointe sur HAProxy).
             #
             # Options de robustesse (corrige des échecs de permission récurrents) :
-            #   --no-perms --omit-dir-times : ne pas tenter de fixer perms/dates
-            #     (l'utilisateur ben n'est pas propriétaire, seulement membre du groupe)
+            #   --no-perms --no-group --omit-dir-times : ne pas tenter de fixer
+            #     perms/group/dates (ben n'est pas propriétaire, seulement membre du groupe)
             #   --chmod=D2775,F664 : dossiers et fichiers lisibles par le groupe/serveur web
             #   --exclude='.env' : NE JAMAIS écraser un éventuel .env distant
             #   --exclude='.well-known' : préserver les challenges ACME
             rsync -av --delete \
-              --no-perms --omit-dir-times \
+              --no-perms --no-group --omit-dir-times \
               --chmod=D2775,F664 \
               --exclude='.env' \
               --exclude='.well-known' \
