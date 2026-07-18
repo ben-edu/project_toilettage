@@ -1,17 +1,934 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Toilettage canin à domicile — Orléans</title>
-  <meta name="description" content="Toilettage canin à domicile à Orléans et environs (10 km). Sans stress pour votre chien : le toiletteur vient chez vous. Réservez en ligne.">
-  <!-- Placeholder — le design soigné et le formulaire de réservation seront
-       construits en phase design (mobile-first, SEO, LocalBusiness). -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toutou à Domicile — Toilettage canin à domicile à Orléans</title>
+<meta name="description" content="Toilettage canin à domicile à Orléans et jusqu'à 10 km. Votre chien est lavé, tondu et bichonné chez vous, sans stress ni transport. Réservez votre créneau en ligne.">
+<meta name="theme-color" content="#6B7B4A">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" sizes="any">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="canonical" href="https://toilettage.proxbenovh.cloud/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Toutou à Domicile — Toilettage canin à domicile à Orléans">
+<meta property="og:description" content="Le toiletteur vient chez vous. Un chien propre et détendu, sans le stress du transport.">
+<meta property="og:url" content="https://toilettage.proxbenovh.cloud/">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "PetGroomer",
+  "name": "Toutou à Domicile",
+  "description": "Toilettage canin à domicile à Orléans et environs.",
+  "url": "https://toilettage.proxbenovh.cloud/",
+  "areaServed": {
+    "@type": "GeoCircle",
+    "geoMidpoint": { "@type": "GeoCoordinates", "latitude": 47.9027, "longitude": 1.9086 },
+    "geoRadius": "10000"
+  },
+  "address": { "@type": "PostalAddress", "addressLocality": "Orléans", "addressCountry": "FR" },
+  "priceRange": "€€",
+  "openingHours": "Mo-Fr 09:00-18:00"
+}
+</script>
+
+<style>
+  :root{
+    --olive:#6B7B4A; --olive-deep:#4F5C34; --olive-soft:#DCE3C9;
+    --cream:#FBF8F0; --peach:#F6D9C0; --peach-deep:#E9B78E;
+    --ink:#38402B; --ink-soft:#6E7360; --white:#FFFFFF;
+    --shadow:rgba(79,92,52,.14);
+    --r-lg:32px; --r-md:22px; --r-sm:14px; --maxw:1140px;
+    --font-display:'Fraunces',Georgia,serif;
+    --font-body:'Nunito','Segoe UI',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--cream);line-height:1.65;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.12;color:var(--ink)}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.74rem;color:var(--olive)}
+
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--font-body);font-weight:800;font-size:1.02rem;padding:15px 30px;border-radius:999px;border:2px solid transparent;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s}
+  .btn-primary{background:var(--olive);color:var(--white);box-shadow:0 10px 24px var(--shadow)}
+  .btn-primary:hover{background:var(--olive-deep);transform:translateY(-2px);box-shadow:0 14px 30px var(--shadow)}
+  .btn-ghost{background:transparent;color:var(--olive-deep);border-color:var(--olive-soft)}
+  .btn-ghost:hover{background:var(--olive-soft)}
+
+  header{position:sticky;top:0;z-index:50;background:rgba(251,248,240,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--olive-soft)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:600;font-size:1.3rem;color:var(--olive-deep)}
+  .brand .paw{width:38px;height:38px;background:var(--olive);border-radius:50%;display:grid;place-items:center;color:var(--white);flex:none}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{font-weight:700;color:var(--ink-soft);font-size:.98rem}
+  .nav-links a:hover{color:var(--olive-deep)}
+  .nav-links a.btn-primary{color:var(--white)}
+  .nav-links a.btn-primary:hover{color:var(--white)}
+  .nav .btn{padding:11px 22px}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px}
+  .burger span{display:block;width:26px;height:3px;background:var(--olive-deep);border-radius:3px;margin:5px 0;transition:.2s}
+
+  .hero{position:relative;overflow:hidden;padding:64px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.4rem,5vw,3.9rem);margin:18px 0 20px}
+  .hero h1 .accent{color:var(--olive);font-style:italic}
+  .hero p.lead{font-size:1.18rem;color:var(--ink-soft);max-width:34ch;margin-bottom:30px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .hero-note{margin-top:22px;display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink-soft);font-size:.95rem}
+  .hero-note .dot{width:9px;height:9px;border-radius:50%;background:var(--peach-deep)}
+  .hero-visual{position:relative}
+  .blob{position:absolute;inset:-8% -6% -8% -6%;background:radial-gradient(120% 120% at 30% 20%,var(--peach) 0%,var(--olive-soft) 70%);border-radius:46% 54% 58% 42%/52% 44% 56% 48%;z-index:0}
+  .hero-photo{position:relative;z-index:1;border-radius:var(--r-lg);aspect-ratio:3/2;object-fit:cover;width:100%;box-shadow:0 26px 50px var(--shadow);border:6px solid var(--white)}
+  .hero-visual picture{display:block}
+  .badge-float{position:absolute;z-index:2;background:var(--white);border-radius:var(--r-md);padding:14px 18px;box-shadow:0 14px 30px var(--shadow);display:flex;align-items:center;gap:12px;font-weight:800}
+  .badge-float.tl{top:14px;left:-14px}
+  .badge-float.br{bottom:22px;right:-10px}
+  .badge-float .ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+  .badge-float small{display:block;font-weight:700;color:var(--ink-soft);font-size:.78rem;letter-spacing:0}
+
+  .trust{background:var(--olive-deep);color:var(--cream);margin-top:36px}
+  .trust .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding-top:22px;padding-bottom:22px}
+  .trust-item{display:flex;align-items:center;gap:12px;font-weight:700;font-size:.98rem}
+  .trust-item svg{flex:none}
+
+  section.block{padding:80px 0}
+  .sec-head{text-align:center;max-width:38rem;margin:0 auto 48px}
+  .sec-head h2{font-size:clamp(2rem,3.6vw,2.8rem);margin:12px 0 14px}
+  .sec-head p{color:var(--ink-soft);font-size:1.08rem}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .step{background:var(--white);border-radius:var(--r-md);padding:34px 28px;box-shadow:0 12px 30px var(--shadow);position:relative;border:1px solid var(--olive-soft)}
+  .step .num{font-family:var(--font-display);font-size:1.05rem;font-weight:600;width:44px;height:44px;border-radius:50%;background:var(--olive-soft);color:var(--olive-deep);display:grid;place-items:center;margin-bottom:18px}
+  .step h3{font-size:1.3rem;margin-bottom:8px}
+  .step p{color:var(--ink-soft)}
+
+  .services{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  .service{display:flex;gap:18px;align-items:flex-start;background:var(--white);border-radius:var(--r-md);padding:26px;border:1px solid var(--olive-soft);transition:transform .18s,box-shadow .18s}
+  .service:hover{transform:translateY(-3px);box-shadow:0 16px 34px var(--shadow)}
+  .service .emoji{width:56px;height:56px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:1.7rem;background:var(--peach)}
+  .service h3{font-size:1.25rem;margin-bottom:4px}
+  .service p{color:var(--ink-soft);font-size:.97rem;margin-bottom:8px}
+  .service .dur{font-weight:800;color:var(--olive-deep);font-size:.9rem}
+  .service .dur b{color:var(--olive)}
+  .tarif-note{text-align:center;max-width:44rem;margin:34px auto 0;color:var(--ink-soft);font-size:.98rem}
+
+  .showcase{padding:70px 0;background:var(--cream)}
+  .showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .showcase-photo{border-radius:var(--r-lg);overflow:hidden;box-shadow:0 20px 44px var(--shadow);border:6px solid var(--white);line-height:0}
+  .showcase-photo img{width:100%;height:auto;display:block}
+  .showcase-copy .eyebrow{margin-bottom:8px;display:block}
+  .showcase-copy h2{font-size:clamp(1.9rem,3.2vw,2.5rem);margin:0 0 14px}
+  .showcase-copy p{color:var(--ink-soft);font-size:1.08rem;margin-bottom:24px}
+
+  .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  .ba{border-radius:var(--r-md);overflow:hidden;position:relative;background:var(--white);box-shadow:0 12px 28px var(--shadow);border:1px solid var(--olive-soft);line-height:0}
+  .ba img{width:100%;height:auto;display:block;transition:transform .3s ease}
+  .ba:hover img{transform:scale(1.03)}
+
+  .zone{background:var(--olive-soft)}
+  .zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  .zone h2{font-size:clamp(2rem,3.4vw,2.6rem);margin:12px 0 16px}
+  .zone p{color:var(--ink-soft);margin-bottom:20px}
+  .quartiers{display:flex;flex-wrap:wrap;gap:10px}
+  .quartiers span{background:var(--white);border-radius:999px;padding:8px 16px;font-weight:700;font-size:.92rem;color:var(--olive-deep);border:1px solid rgba(79,92,52,.15)}
+  .zone-photo{border-radius:var(--r-lg);overflow:hidden;box-shadow:0 18px 40px var(--shadow);position:relative;background:var(--white);border:6px solid var(--white)}
+  .zone-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+  .zone-photo figcaption{position:absolute;left:14px;bottom:14px;background:rgba(251,248,240,.92);backdrop-filter:blur(4px);padding:9px 15px;border-radius:999px;font-weight:800;color:var(--olive-deep);font-size:.92rem;display:flex;align-items:center;gap:8px}
+  .zone-photo .pin{width:14px;height:14px;background:var(--olive);border-radius:50% 50% 50% 0;transform:rotate(-45deg);flex:none}
+  .zone-photo.no-photo{aspect-ratio:4/3;background:radial-gradient(circle at 50% 45%,rgba(107,123,74,.16) 0 30%,transparent 32%),var(--olive-soft);display:grid;place-items:center}
+  .zone-photo.no-photo img{display:none}
+  .zone-photo.no-photo figcaption{position:static;background:transparent;backdrop-filter:none}
+
+  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .review{background:var(--white);border-radius:var(--r-md);padding:28px;border:1px solid var(--olive-soft);box-shadow:0 10px 26px var(--shadow)}
+  .stars{color:var(--peach-deep);font-size:1.05rem;letter-spacing:2px;margin-bottom:12px}
+  .review p{font-size:1rem;margin-bottom:16px}
+  .review .who{display:flex;align-items:center;gap:12px;font-weight:800}
+  .review .av{width:42px;height:42px;border-radius:50%;background:var(--olive-soft);display:grid;place-items:center;color:var(--olive-deep);flex:none}
+  .review .who small{display:block;color:var(--ink-soft);font-weight:700}
+
+  .final{padding:84px 0}
+  .final-card{background:linear-gradient(135deg,var(--olive) 0%,var(--olive-deep) 100%);color:var(--cream);border-radius:var(--r-lg);padding:56px 40px;text-align:center;position:relative;overflow:hidden;box-shadow:0 24px 50px var(--shadow)}
+  .final-card h2{color:var(--white);font-size:clamp(2rem,3.6vw,2.7rem);margin-bottom:14px}
+  .final-card p{max-width:40ch;margin:0 auto 28px;opacity:.92;font-size:1.1rem}
+  .final-inner{display:grid;grid-template-columns:1.3fr .9fr;gap:40px;align-items:center;position:relative;z-index:1;text-align:left}
+  .final-text p{margin-left:0}
+  .final-photo{border-radius:var(--r-md);overflow:hidden;border:5px solid rgba(255,255,255,.85);box-shadow:0 16px 34px rgba(0,0,0,.18);line-height:0}
+  .final-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .final-card .btn-primary{background:var(--white);color:var(--olive-deep)}
+  .final-card .btn-primary:hover{background:var(--peach)}
+  .paw-bg{position:absolute;opacity:.10;font-size:8rem;line-height:1}
+  .paw-bg.a{top:-10px;left:20px}
+  .paw-bg.b{bottom:-24px;right:26px;font-size:11rem}
+
+  footer{background:var(--ink);color:#D7DBC9;padding:52px 0 30px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;margin-bottom:34px}
+  footer .brand{color:var(--cream)}
+  footer p{color:#AEB49A;font-size:.95rem;margin-top:12px;max-width:32ch}
+  footer h4{font-family:var(--font-body);font-weight:800;color:var(--cream);margin-bottom:14px;font-size:1rem}
+  footer ul{list-style:none}
+  footer li{margin-bottom:9px}
+  footer a{color:#AEB49A;font-weight:600}
+  footer a:hover{color:var(--peach)}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.10);padding-top:20px;font-size:.86rem;color:#8E9379;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:38px}
+    .hero-visual{order:-1;max-width:420px;margin:0 auto}
+    .steps,.reviews{grid-template-columns:1fr}
+    .services{grid-template-columns:1fr}
+    .gallery{grid-template-columns:1fr}
+    .showcase-grid{grid-template-columns:1fr;gap:28px}
+    .final-inner{grid-template-columns:1fr;gap:26px;text-align:center}
+    .final-photo{max-width:300px;margin:0 auto}
+    .choice-grid{grid-template-columns:1fr}
+    .slots-grid{grid-template-columns:repeat(2,1fr)}
+    .zone-grid{grid-template-columns:1fr;gap:30px}
+    .foot-grid{grid-template-columns:1fr;gap:24px}
+    .nav-links{position:fixed;inset:72px 0 auto 0;background:var(--cream);flex-direction:column;gap:0;padding:8px 24px 20px;border-bottom:1px solid var(--olive-soft);transform:translateY(-140%);transition:transform .25s ease}
+    .nav-links.open{transform:translateY(0)}
+    .nav-links a{padding:14px 0;width:100%;border-bottom:1px solid var(--olive-soft)}
+    .nav-links .btn{margin-top:12px;justify-content:center}
+    .burger{display:block}
+  }
+  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important}}
+  :focus-visible{outline:3px solid var(--olive);outline-offset:2px;border-radius:6px}
+
+  /* Modale de réservation */
+  .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(56,64,43,.55);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--cream);border-radius:var(--r-lg);max-width:560px;width:100%;margin:auto;box-shadow:0 30px 70px rgba(0,0,0,.3);overflow:hidden;position:relative}
+  .modal-head{background:var(--white);padding:22px 26px;border-bottom:1px solid var(--olive-soft);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2}
+  .modal-head h3{font-size:1.3rem;color:var(--olive-deep)}
+  .modal-close{background:var(--olive-soft);border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1.3rem;color:var(--olive-deep);display:grid;place-items:center;line-height:1}
+  .modal-close:hover{background:var(--peach)}
+  .modal-body{padding:26px}
+  .steps-bar{display:flex;gap:6px;margin-bottom:24px}
+  .steps-bar .dot{flex:1;height:5px;border-radius:3px;background:var(--olive-soft);transition:background .2s}
+  .steps-bar .dot.active{background:var(--olive)}
+  .step-panel{display:none}
+  .step-panel.active{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .step-panel h4{font-family:var(--font-display);font-size:1.35rem;margin-bottom:6px;color:var(--ink)}
+  .step-panel .sub{color:var(--ink-soft);font-size:.95rem;margin-bottom:20px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-weight:800;font-size:.92rem;margin-bottom:6px;color:var(--olive-deep)}
+  .field input,.field select,.field textarea{width:100%;padding:13px 15px;border:2px solid var(--olive-soft);border-radius:14px;font-family:var(--font-body);font-size:1rem;background:var(--white);color:var(--ink)}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--olive)}
+  .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .choice{border:2px solid var(--olive-soft);background:var(--white);border-radius:16px;padding:16px;cursor:pointer;transition:all .15s;text-align:left}
+  .choice:hover{border-color:var(--olive)}
+  .choice.selected{border-color:var(--olive);background:var(--olive-soft)}
+  .choice .c-title{font-weight:800;color:var(--ink);margin-bottom:2px}
+  .choice .c-meta{font-size:.85rem;color:var(--ink-soft)}
+  .size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .size-opt{border:2px solid var(--olive-soft);background:var(--white);border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;transition:all .15s}
+  .size-opt:hover{border-color:var(--olive)}
+  .size-opt.selected{border-color:var(--olive);background:var(--olive-soft)}
+  .size-opt .emoji{font-size:1.6rem;display:block;margin-bottom:4px}
+  .size-opt .s-name{font-weight:800;font-size:.9rem;color:var(--ink)}
+  .size-opt .s-meta{font-size:.75rem;color:var(--ink-soft)}
+  .slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:230px;overflow-y:auto;padding:2px}
+  .slot{border:2px solid var(--olive-soft);background:var(--white);border-radius:12px;padding:10px 6px;cursor:pointer;text-align:center;font-weight:700;font-size:.9rem;color:var(--olive-deep);transition:all .15s}
+  .slot:hover{border-color:var(--olive)}
+  .slot.selected{border-color:var(--olive);background:var(--olive);color:var(--white)}
+  .day-group{margin-bottom:16px}
+  .day-group h5{font-weight:800;color:var(--ink-soft);font-size:.85rem;text-transform:capitalize;margin-bottom:8px}
+  .modal-foot{display:flex;gap:12px;justify-content:space-between;margin-top:24px}
+  .modal-foot .btn{flex:1;justify-content:center}
+  .msg{padding:13px 16px;border-radius:12px;font-size:.92rem;font-weight:700;margin-bottom:16px}
+  .msg.err{background:#FBE3DE;color:#A6402E}
+  .msg.ok{background:var(--olive-soft);color:var(--olive-deep)}
+  .msg.info{background:#FBEED9;color:#7a5a2e}
+  .spinner{width:22px;height:22px;border:3px solid var(--olive-soft);border-top-color:var(--olive);border-radius:50%;animation:spin .7s linear infinite;margin:20px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .recap{background:var(--white);border:1px solid var(--olive-soft);border-radius:16px;padding:18px;margin-bottom:18px}
+  .recap-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.95rem}
+  .recap-row span:first-child{color:var(--ink-soft)}
+  .recap-row span:last-child{font-weight:800;color:var(--ink);text-align:right}
+  .success-box{text-align:center;padding:20px 0}
+  .success-box .check{width:70px;height:70px;border-radius:50%;background:var(--olive-soft);display:grid;place-items:center;margin:0 auto 18px;font-size:2rem}
+  .success-box h4{font-size:1.5rem;margin-bottom:8px}
+  .success-box p{color:var(--ink-soft);margin-bottom:8px}
+
+  /* Bandeau cookies */
+  .cookie{position:fixed;left:16px;right:16px;bottom:16px;z-index:100;background:var(--white);border:1px solid var(--olive-soft);border-radius:var(--r-md);box-shadow:0 18px 44px var(--shadow);padding:22px 24px;max-width:560px;margin:0 auto;display:none}
+  .cookie.show{display:block}
+  .cookie h3{font-size:1.15rem;margin-bottom:6px}
+  .cookie p{color:var(--ink-soft);font-size:.95rem;margin-bottom:16px}
+  .cookie p a{color:var(--olive-deep);font-weight:700;text-decoration:underline}
+  .cookie-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .cookie-actions .btn{padding:11px 22px;font-size:.95rem}
+  .btn-mini{background:transparent;color:var(--ink-soft);border-color:var(--olive-soft)}
+  .btn-mini:hover{background:var(--olive-soft);color:var(--olive-deep)}
+</style>
 </head>
 <body>
-  <main>
-    <h1>Toilettage canin à domicile — Orléans</h1>
-    <p>Site en construction. La réservation en ligne arrive bientôt.</p>
-  </main>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="Toutou à Domicile, accueil">
+      <span class="paw" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="9" r="2.1"/><circle cx="12" cy="6.4" r="2.3"/><circle cx="18" cy="9" r="2.1"/><path d="M12 11c-3 0-5.4 2.3-5.4 4.7 0 1.9 1.6 2.8 3 2.8 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c1.4 0 3-.9 3-2.8C17.4 13.3 15 11 12 11z"/></svg>
+      </span>
+      Toutou à Domicile
+    </a>
+    <nav class="nav-links" id="menu">
+      <a href="#prestations">Prestations</a>
+      <a href="#process">Comment ça marche</a>
+      <a href="#zone">Zone couverte</a>
+      <a href="#avis">Avis</a>
+      <a class="btn btn-primary" href="#reserver">Réserver</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Toilettage canin à domicile · Orléans</span>
+      <h1>Un chien tout beau,<br><span class="accent">sans quitter</span> la maison.</h1>
+      <p class="lead">Le toiletteur vient chez vous avec tout le matériel. Votre compagnon est lavé, tondu et bichonné en douceur — pas de transport, pas de stress.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#reserver">Réserver un créneau</a>
+        <a class="btn btn-ghost" href="#prestations">Voir les prestations</a>
+      </div>
+      <div class="hero-note"><span class="dot" aria-hidden="true"></span> Orléans + 10 km autour · un seul rendez-vous, tout se passe chez vous</div>
+    </div>
+    <div class="hero-visual">
+      <div class="blob" aria-hidden="true"></div>
+      <picture>
+        <source srcset="assets/hero-dog.webp" type="image/webp">
+        <img class="hero-photo" alt="Toilettage d'un chien en douceur, aux ciseaux"
+          src="assets/hero-dog.jpg" width="1200" height="800">
+      </picture>
+      <div class="badge-float tl">
+        <span class="ic" style="background:var(--peach)" aria-hidden="true">🏠</span>
+        <span>À domicile<small>zéro transport</small></span>
+      </div>
+      <div class="badge-float br">
+        <span class="ic" style="background:var(--olive-soft)" aria-hidden="true">💚</span>
+        <span>Sans stress<small>en douceur</small></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust">
+  <div class="wrap">
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DCE3C9" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg> Matériel professionnel apporté chez vous</div>
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DCE3C9" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg> Un seul animal à la fois, tout en douceur</div>
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DCE3C9" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg> Réservation en ligne en 2 minutes</div>
+  </div>
+</div>
+
+<section class="block" id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Comment ça marche</span>
+      <h2>Trois étapes, et c'est réglé</h2>
+      <p>De la réservation au chien tout propre, sans jamais sortir de chez vous.</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <div class="num" aria-hidden="true">1</div>
+        <h3>Vous réservez</h3>
+        <p>Choisissez la prestation, la taille de votre chien et un créneau qui vous arrange. Confirmation immédiate par email.</p>
+      </article>
+      <article class="step">
+        <div class="num" aria-hidden="true">2</div>
+        <h3>Le toiletteur arrive</h3>
+        <p>Il se déplace chez vous avec tout le nécessaire. Votre chien reste dans son environnement, au calme.</p>
+      </article>
+      <article class="step">
+        <div class="num" aria-hidden="true">3</div>
+        <h3>Un toutou tout neuf</h3>
+        <p>Propre, démêlé et tout doux. Vous n'avez plus qu'à profiter des câlins.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE bande photo -->
+<section class="showcase">
+  <div class="wrap showcase-grid">
+    <figure class="showcase-photo">
+      <picture>
+        <source srcset="assets/sample-groom.webp" type="image/webp">
+        <img src="assets/sample-groom.jpg" alt="Chien magnifiquement toiletté sous plusieurs angles" loading="lazy">
+      </picture>
+    </figure>
+    <div class="showcase-copy">
+      <span class="eyebrow">Un travail soigné</span>
+      <h2>Chaque finition compte</h2>
+      <p>Coupe équilibrée, pelage démêlé, contours nets : votre chien repart net et tout doux, dans le respect de son confort et de son rythme.</p>
+      <a class="btn btn-primary" href="#reserver">Réserver un créneau</a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="prestations" style="background:var(--white)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Nos prestations</span>
+      <h2>Des soins adaptés à chaque chien</h2>
+      <p>La durée et le tarif s'ajustent à la taille de votre compagnon. Les prix ci-dessous sont des tarifs de départ, confirmés au moment de la réservation.</p>
+    </div>
+    <div class="services" id="services-list">
+      <article class="service">
+        <span class="emoji" aria-hidden="true">🛁</span>
+        <div>
+          <h3>Bain shampooing</h3>
+          <p>Shampooing adapté au pelage, rinçage soigneux et séchage.</p>
+          <span class="dur">≈ 45 min · <b>dès 35 €</b></span>
+        </div>
+      </article>
+      <article class="service">
+        <span class="emoji" aria-hidden="true">✂️</span>
+        <div>
+          <h3>Tonte &amp; toilettage</h3>
+          <p>Coupe et mise en forme du pelage selon la race et vos envies.</p>
+          <span class="dur">≈ 60–90 min · <b>dès 45 €</b></span>
+        </div>
+      </article>
+      <article class="service">
+        <span class="emoji" aria-hidden="true">🦷</span>
+        <div>
+          <h3>Détartrage à la pince</h3>
+          <p>Détartrage dentaire mécanique tout en douceur.</p>
+          <span class="dur">≈ 30 min · <b>20 €</b></span>
+        </div>
+      </article>
+      <article class="service">
+        <span class="emoji" aria-hidden="true">✨</span>
+        <div>
+          <h3>Forfait complet</h3>
+          <p>Le grand jeu : bain complet suivi d'une tonte et des finitions.</p>
+          <span class="dur">≈ 90–120 min · <b>dès 60 €</b></span>
+        </div>
+      </article>
+    </div>
+    <p class="tarif-note">Tarifs indicatifs pour un petit chien. Le prix exact dépend de la taille et de l'état du pelage — il vous est confirmé lors de la réservation, sans surprise.</p>
+  </div>
+</section>
+
+<section class="block" id="galerie">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Avant · Après</span>
+      <h2>La différence saute aux yeux</h2>
+      <p>Quelques compagnons passés entre nos mains. Les vraies photos remplaceront bientôt ces exemples.</p>
+    </div>
+    <div class="gallery">
+      <figure class="ba">
+        <picture><source srcset="assets/avant-apres-1.webp" type="image/webp"><img src="assets/avant-apres-1.jpg" alt="Chien avant et après le toilettage" loading="lazy"></picture>
+      </figure>
+      <figure class="ba">
+        <picture><source srcset="assets/avant-apres-2.webp" type="image/webp"><img src="assets/avant-apres-2.jpg" alt="Chien avant et après la tonte" loading="lazy"></picture>
+      </figure>
+      <figure class="ba">
+        <picture><source srcset="assets/avant-apres-3.webp" type="image/webp"><img src="assets/avant-apres-3.jpg" alt="Chien avant et après le bain et démêlage" loading="lazy"></picture>
+      </figure>
+      <figure class="ba">
+        <picture><source srcset="assets/avant-apres-4.webp" type="image/webp"><img src="assets/avant-apres-4.jpg" alt="Chien avant et après le forfait complet" loading="lazy"></picture>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="block zone" id="zone">
+  <div class="wrap zone-grid">
+    <div>
+      <span class="eyebrow">Zone d'intervention</span>
+      <h2>Orléans et ses environs</h2>
+      <p>On se déplace dans tout Orléans et les communes voisines, jusqu'à environ 10 km depuis la Place du Martroi. Pas sûr d'être dans la zone ? La réservation le vérifie automatiquement pour vous.</p>
+      <div class="quartiers">
+        <span>Orléans</span><span>Saint-Jean-de-Braye</span><span>Saint-Jean-le-Blanc</span>
+        <span>Saint-Jean-de-la-Ruelle</span><span>Fleury-les-Aubrais</span><span>Saran</span>
+        <span>Olivet</span><span>Saint-Pryvé-Saint-Mesmin</span><span>Saint-Denis-en-Val</span>
+        <span>La Chapelle-Saint-Mesmin</span><span>Ingré</span><span>Semoy</span>
+        <span>Chécy</span><span>Combleux</span><span>Boigny-sur-Bionne</span>
+      </div>
+    </div>
+    <figure class="zone-photo">
+      <picture>
+        <source srcset="assets/place-martroi.webp" type="image/webp">
+        <img src="assets/place-martroi.jpg" alt="Place du Martroi à Orléans, cœur de notre zone d'intervention" loading="lazy"
+          onerror="this.closest('.zone-photo').classList.add('no-photo')">
+      </picture>
+    </figure>
+  </div>
+</section>
+
+<section class="block" id="avis">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Ils nous font confiance</span>
+      <h2>Des maîtres (et des chiens) ravis</h2>
+    </div>
+    <div class="reviews">
+      <article class="review">
+        <div class="stars" aria-label="5 sur 5">★★★★★</div>
+        <p>«&nbsp;Ma chienne déteste la voiture, alors le toilettage à la maison a tout changé. Elle était détendue du début à la fin.&nbsp;»</p>
+        <div class="who"><span class="av" aria-hidden="true">C</span><span>Claire M.<small>Orléans centre</small></span></div>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="5 sur 5">★★★★★</div>
+        <p>«&nbsp;Ponctuel, doux avec Gribouille et un travail impeccable. Je ne reviendrai pas en arrière.&nbsp;»</p>
+        <div class="who"><span class="av" aria-hidden="true">T</span><span>Thomas R.<small>Olivet</small></span></div>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="5 sur 5">★★★★★</div>
+        <p>«&nbsp;Pratique et rassurant&nbsp;: tout se fait chez moi, et mon caniche ressort magnifique à chaque fois.&nbsp;»</p>
+        <div class="who"><span class="av" aria-hidden="true">S</span><span>Sophie L.<small>Saint-Jean-de-Braye</small></span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="reserver">
+  <div class="wrap">
+    <div class="final-card">
+      <span class="paw-bg a" aria-hidden="true">🐾</span>
+      <span class="paw-bg b" aria-hidden="true">🐾</span>
+      <div class="final-inner">
+        <div class="final-text">
+          <h2>Prêt à chouchouter votre chien&nbsp;?</h2>
+          <p>Réservez un créneau en quelques clics. On vient à vous, vous n'avez rien à préparer.</p>
+          <a class="btn btn-primary" href="#reserver" id="open-booking">Prendre rendez-vous</a>
+        </div>
+        <figure class="final-photo">
+          <picture>
+            <source srcset="assets/sample-happy.webp" type="image/webp">
+            <img src="assets/sample-happy.jpg" alt="Petit chien tout propre et heureux après son toilettage" loading="lazy">
+          </picture>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brand">
+          <span class="paw" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="9" r="2.1"/><circle cx="12" cy="6.4" r="2.3"/><circle cx="18" cy="9" r="2.1"/><path d="M12 11c-3 0-5.4 2.3-5.4 4.7 0 1.9 1.6 2.8 3 2.8 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c1.4 0 3-.9 3-2.8C17.4 13.3 15 11 12 11z"/></svg>
+          </span>
+          Toutou à Domicile
+        </div>
+        <p>Toilettage canin à domicile à Orléans et ses alentours. Votre chien bichonné chez vous, sans stress.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#prestations">Prestations</a></li>
+          <li><a href="#process">Comment ça marche</a></li>
+          <li><a href="#zone">Zone couverte</a></li>
+          <li><a href="#avis">Avis</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Réserver</h4>
+        <ul>
+          <li><a href="#reserver">Prendre rendez-vous</a></li>
+          <li><a href="#zone">Vérifier ma zone</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Informations</h4>
+        <ul>
+          <li><a href="mentions-legales.html">Mentions légales</a></li>
+          <li><a href="confidentialite.html">Politique de confidentialité</a></li>
+          <li><a href="#" id="cookie-settings">Gérer les cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Toutou à Domicile · Orléans</span>
+      <span>Fait avec 💚 pour les chiens du Loiret</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Modale de réservation -->
+<div class="modal-overlay" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">Réserver un rendez-vous</h3>
+      <button class="modal-close" id="modal-close" aria-label="Fermer">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="steps-bar" aria-hidden="true">
+        <div class="dot active" data-dot="1"></div>
+        <div class="dot" data-dot="2"></div>
+        <div class="dot" data-dot="3"></div>
+        <div class="dot" data-dot="4"></div>
+      </div>
+
+      <!-- Étape 1 : prestation + taille -->
+      <div class="step-panel active" data-step="1">
+        <h4>Votre prestation</h4>
+        <p class="sub">Choisissez le soin et la taille de votre chien.</p>
+        <div id="services-loading"><div class="spinner"></div></div>
+        <div class="field" id="services-field" style="display:none">
+          <label>Prestation</label>
+          <div class="choice-grid" id="services-choices"></div>
+        </div>
+        <div class="field" id="size-field" style="display:none">
+          <label>Taille du chien</label>
+          <div class="size-grid">
+            <button type="button" class="size-opt" data-size="petit"><span class="emoji">🐕</span><span class="s-name">Petit</span><span class="s-meta">&lt; 10 kg</span></button>
+            <button type="button" class="size-opt" data-size="moyen"><span class="emoji">🐕</span><span class="s-name">Moyen</span><span class="s-meta">10–25 kg</span></button>
+            <button type="button" class="size-opt" data-size="grand"><span class="emoji">🐕</span><span class="s-name">Grand</span><span class="s-meta">&gt; 25 kg</span></button>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-primary" id="to-step-2" disabled>Continuer</button>
+        </div>
+      </div>
+
+      <!-- Étape 2 : adresse + vérification zone -->
+      <div class="step-panel" data-step="2">
+        <h4>Votre adresse</h4>
+        <p class="sub">On vérifie qu'on peut se déplacer chez vous.</p>
+        <div id="zone-msg"></div>
+        <div class="field">
+          <label for="addr">Adresse complète</label>
+          <input type="text" id="addr" placeholder="12 rue de Bourgogne, 45000 Orléans" autocomplete="street-address">
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" data-back="1">Retour</button>
+          <button class="btn btn-primary" id="check-zone">Vérifier ma zone</button>
+        </div>
+      </div>
+
+      <!-- Étape 3 : créneaux -->
+      <div class="step-panel" data-step="3">
+        <h4>Choisissez un créneau</h4>
+        <p class="sub">Voici les disponibilités pour votre prestation.</p>
+        <div id="slots-msg"></div>
+        <div id="slots-loading" style="display:none"><div class="spinner"></div></div>
+        <div id="slots-container"></div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" data-back="2">Retour</button>
+          <button class="btn btn-primary" id="to-step-4" disabled>Continuer</button>
+        </div>
+      </div>
+
+      <!-- Étape 4 : coordonnées + confirmation -->
+      <div class="step-panel" data-step="4">
+        <h4>Vos coordonnées</h4>
+        <p class="sub">Dernière étape pour confirmer votre rendez-vous.</p>
+        <div class="recap" id="recap"></div>
+        <div id="booking-msg"></div>
+        <div class="field">
+          <label for="cust-name">Nom et prénom</label>
+          <input type="text" id="cust-name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="cust-email">Email</label>
+          <input type="email" id="cust-email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="cust-phone">Téléphone</label>
+          <input type="tel" id="cust-phone" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="dog-name">Nom de votre chien <span style="font-weight:400;color:var(--ink-soft)">(optionnel)</span></label>
+          <input type="text" id="dog-name">
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" data-back="3">Retour</button>
+          <button class="btn btn-primary" id="submit-booking">Confirmer la réservation</button>
+        </div>
+      </div>
+
+      <!-- Étape 5 : succès -->
+      <div class="step-panel" data-step="5">
+        <div class="success-box">
+          <div class="check" aria-hidden="true">✓</div>
+          <h4>C'est réservé !</h4>
+          <p id="success-detail"></p>
+          <p>Un email de confirmation vient de vous être envoyé.</p>
+          <div class="modal-foot" style="justify-content:center;margin-top:22px">
+            <button class="btn btn-primary" id="close-success">Parfait, merci !</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bandeau cookies (RGPD) -->
+<div class="cookie" id="cookie-banner" role="dialog" aria-live="polite" aria-label="Gestion des cookies">
+  <h3>🍪 Un petit cookie ?</h3>
+  <p>Ce site utilise uniquement des cookies nécessaires à son bon fonctionnement. Aucun cookie publicitaire ni de traçage. En savoir plus dans notre <a href="confidentialite.html">politique de confidentialité</a>.</p>
+  <div class="cookie-actions">
+    <button class="btn btn-primary" id="cookie-accept">J'ai compris</button>
+    <button class="btn btn-mini" id="cookie-refuse">Refuser</button>
+  </div>
+</div>
+
+<script>
+  // Menu mobile
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('menu');
+  burger.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  menu.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => {
+      menu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    })
+  );
+
+  // Bandeau cookies — choix mémorisé en cookie (pas de localStorage requis)
+  const banner = document.getElementById('cookie-banner');
+  function getConsent() {
+    return document.cookie.split('; ').find(c => c.startsWith('cookie_consent='));
+  }
+  function setConsent(val) {
+    const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+    document.cookie = `cookie_consent=${val}; expires=${d.toUTCString()}; path=/; SameSite=Lax`;
+  }
+  if (!getConsent()) { banner.classList.add('show'); }
+  document.getElementById('cookie-accept').addEventListener('click', () => {
+    setConsent('accepted'); banner.classList.remove('show');
+  });
+  document.getElementById('cookie-refuse').addEventListener('click', () => {
+    setConsent('refused'); banner.classList.remove('show');
+  });
+  const cs = document.getElementById('cookie-settings');
+  if (cs) cs.addEventListener('click', (e) => { e.preventDefault(); banner.classList.add('show'); });
+
+  /* ============ RÉSERVATION ============ */
+  // Base API : dérivée du domaine courant (staging → api.staging, prod → api.)
+  const API_BASE = (() => {
+    const h = location.hostname;
+    if (h.startsWith('staging.')) return 'https://api.staging.toilettage.proxbenovh.cloud/api/v1';
+    if (h === 'toilettage.proxbenovh.cloud' || h.startsWith('www.')) return 'https://api.toilettage.proxbenovh.cloud/api/v1';
+    return 'https://api.staging.toilettage.proxbenovh.cloud/api/v1'; // défaut (dev/local)
+  })();
+
+  const modal = document.getElementById('booking-modal');
+  const state = { service: null, size: null, address: null, geo: null, slot: null, services: [] };
+
+  function openModal() {
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    if (!state.services.length) loadServices();
+  }
+  function closeModal() {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  // Brancher tous les boutons "Réserver"
+  document.querySelectorAll('a[href="#reserver"], #open-booking').forEach(el =>
+    el.addEventListener('click', (e) => { e.preventDefault(); openModal(); })
+  );
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('close-success').addEventListener('click', () => { closeModal(); goStep(1); resetForm(); });
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+
+  function goStep(n) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.toggle('active', +p.dataset.step === n));
+    document.querySelectorAll('.steps-bar .dot').forEach(d => d.classList.toggle('active', +d.dataset.dot <= Math.min(n,4)));
+  }
+  document.querySelectorAll('[data-back]').forEach(b =>
+    b.addEventListener('click', () => goStep(+b.dataset.back))
+  );
+
+  function resetForm() {
+    state.service = state.size = state.address = state.geo = state.slot = null;
+    document.querySelectorAll('.choice.selected,.size-opt.selected,.slot.selected').forEach(e => e.classList.remove('selected'));
+    ['addr','cust-name','cust-email','cust-phone','dog-name'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('to-step-2').disabled = true;
+    document.getElementById('to-step-4').disabled = true;
+    ['zone-msg','slots-msg','booking-msg'].forEach(id => document.getElementById(id).innerHTML='');
+  }
+
+  function msg(containerId, text, type='info') {
+    document.getElementById(containerId).innerHTML = `<div class="msg ${type}">${text}</div>`;
+  }
+
+  // ---- Étape 1 : services ----
+  async function loadServices() {
+    try {
+      const res = await fetch(`${API_BASE}/services`);
+      if (!res.ok) throw new Error();
+      state.services = await res.json();
+      const box = document.getElementById('services-choices');
+      box.innerHTML = state.services.map(s => `
+        <button type="button" class="choice" data-service="${s.id}">
+          <div class="c-title">${s.name}</div>
+          <div class="c-meta">≈ ${s.duration_minutes} min${s.price_cents ? ' · dès ' + (s.price_cents/100).toFixed(0) + ' €' : ''}</div>
+        </button>`).join('');
+      document.getElementById('services-loading').style.display = 'none';
+      document.getElementById('services-field').style.display = 'block';
+      document.getElementById('size-field').style.display = 'block';
+      box.querySelectorAll('.choice').forEach(c =>
+        c.addEventListener('click', () => {
+          box.querySelectorAll('.choice').forEach(x => x.classList.remove('selected'));
+          c.classList.add('selected');
+          state.service = state.services.find(s => s.id === +c.dataset.service);
+          checkStep1();
+        })
+      );
+    } catch {
+      document.getElementById('services-loading').innerHTML = '<div class="msg err">Impossible de charger les prestations. Réessayez plus tard.</div>';
+    }
+  }
+  document.querySelectorAll('.size-opt').forEach(o =>
+    o.addEventListener('click', () => {
+      document.querySelectorAll('.size-opt').forEach(x => x.classList.remove('selected'));
+      o.classList.add('selected');
+      state.size = o.dataset.size;
+      checkStep1();
+    })
+  );
+  function checkStep1() {
+    document.getElementById('to-step-2').disabled = !(state.service && state.size);
+  }
+  document.getElementById('to-step-2').addEventListener('click', () => goStep(2));
+
+  // ---- Étape 2 : vérification zone ----
+  document.getElementById('check-zone').addEventListener('click', async () => {
+    const addr = document.getElementById('addr').value.trim();
+    if (addr.length < 5) { msg('zone-msg', 'Merci de saisir une adresse complète.', 'err'); return; }
+    msg('zone-msg', 'Vérification en cours…', 'info');
+    const btn = document.getElementById('check-zone');
+    btn.disabled = true;
+    try {
+      const res = await fetch(`${API_BASE}/geocode/check?address=${encodeURIComponent(addr)}`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) { msg('zone-msg', data.detail || 'Adresse introuvable.', 'err'); btn.disabled=false; return; }
+      if (!data.in_zone) {
+        msg('zone-msg', `Désolé, votre adresse est à ${data.distance_km} km du centre et se situe hors de notre zone pour le moment.`, 'err');
+        btn.disabled = false; return;
+      }
+      state.address = addr; state.geo = data;
+      msg('zone-msg', `Parfait ! Vous êtes dans notre zone (à ${data.distance_km} km). 🎉`, 'ok');
+      setTimeout(() => { loadSlots(); goStep(3); btn.disabled=false; }, 600);
+    } catch {
+      msg('zone-msg', 'Erreur de connexion. Réessayez.', 'err'); btn.disabled=false;
+    }
+  });
+
+  // ---- Étape 3 : créneaux ----
+  async function loadSlots() {
+    const cont = document.getElementById('slots-container');
+    cont.innerHTML = ''; document.getElementById('slots-msg').innerHTML='';
+    document.getElementById('slots-loading').style.display = 'block';
+    const from = new Date(); from.setHours(0,0,0,0);
+    const to = new Date(); to.setDate(to.getDate() + 21);
+    try {
+      const res = await fetch(`${API_BASE}/availability`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          service_id: state.service.id, dog_size: state.size,
+          date_from: from.toISOString(), date_to: to.toISOString()
+        })
+      });
+      const slots = await res.json();
+      document.getElementById('slots-loading').style.display = 'none';
+      if (!res.ok || !Array.isArray(slots) || !slots.length) {
+        msg('slots-msg', 'Aucun créneau disponible sur les 3 prochaines semaines. Contactez-nous directement.', 'info');
+        return;
+      }
+      // Grouper par jour
+      const groups = {};
+      slots.forEach(s => {
+        const d = new Date(s.start_at);
+        const key = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+        (groups[key] = groups[key] || []).push(s);
+      });
+      cont.innerHTML = Object.entries(groups).map(([day, arr]) => `
+        <div class="day-group">
+          <h5>${day}</h5>
+          <div class="slots-grid">
+            ${arr.map(s => {
+              const t = new Date(s.start_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+              return `<button type="button" class="slot" data-start="${s.start_at}">${t}</button>`;
+            }).join('')}
+          </div>
+        </div>`).join('');
+      cont.querySelectorAll('.slot').forEach(sl =>
+        sl.addEventListener('click', () => {
+          cont.querySelectorAll('.slot').forEach(x => x.classList.remove('selected'));
+          sl.classList.add('selected');
+          state.slot = sl.dataset.start;
+          document.getElementById('to-step-4').disabled = false;
+        })
+      );
+    } catch {
+      document.getElementById('slots-loading').style.display = 'none';
+      msg('slots-msg', 'Erreur de chargement des créneaux. Réessayez.', 'err');
+    }
+  }
+  document.getElementById('to-step-4').addEventListener('click', () => { buildRecap(); goStep(4); });
+
+  // ---- Étape 4 : récap + confirmation ----
+  function buildRecap() {
+    const d = new Date(state.slot);
+    const when = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}) + ' à ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('recap').innerHTML = `
+      <div class="recap-row"><span>Prestation</span><span>${state.service.name}</span></div>
+      <div class="recap-row"><span>Taille</span><span>${state.size}</span></div>
+      <div class="recap-row"><span>Adresse</span><span>${state.address}</span></div>
+      <div class="recap-row"><span>Rendez-vous</span><span>${when}</span></div>`;
+  }
+  document.getElementById('submit-booking').addEventListener('click', async () => {
+    const name = document.getElementById('cust-name').value.trim();
+    const email = document.getElementById('cust-email').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    const dog = document.getElementById('dog-name').value.trim();
+    if (name.length < 2) { msg('booking-msg','Merci d\'indiquer votre nom.','err'); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg('booking-msg','Email invalide.','err'); return; }
+    const btn = document.getElementById('submit-booking');
+    btn.disabled = true; msg('booking-msg','Enregistrement…','info');
+    try {
+      const res = await fetch(`${API_BASE}/bookings`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          service_id: state.service.id, dog_size: state.size, dog_name: dog,
+          customer_name: name, customer_email: email, customer_phone: phone,
+          address: state.address, start_at: state.slot
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        msg('booking-msg', data.detail || 'Une erreur est survenue.', 'err');
+        btn.disabled = false;
+        // Si le créneau vient d'être pris, revenir aux créneaux
+        if (res.status === 409) { setTimeout(() => { loadSlots(); goStep(3); }, 1500); }
+        return;
+      }
+      const d = new Date(data.start_at);
+      document.getElementById('success-detail').textContent =
+        `${state.service.name}, le ${d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})} à ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}.`;
+      goStep(5);
+      btn.disabled = false;
+    } catch {
+      msg('booking-msg','Erreur de connexion. Réessayez.','err'); btn.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>

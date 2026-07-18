@@ -1,6 +1,7 @@
 """Point d'entrée FastAPI — API de réservation toilettage canin à domicile."""
 
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,11 +12,25 @@ from app.routers import admin, public
 logging.basicConfig(level=logging.INFO)
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Au démarrage : crée les tables + données de base si nécessaire.
+    # Idempotent et protégé par un verrou consultatif (voir seed_safe).
+    # Évite tout kubectl exec dans le pipeline (pas de permission RBAC requise).
+    if settings.seed_on_startup:
+        from app.seed import seed_safe
+
+        seed_safe()
+    yield
+
+
 app = FastAPI(
     title=settings.app_name,
     version="0.1.0",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
+    lifespan=lifespan,
 )
 
 app.add_middleware(

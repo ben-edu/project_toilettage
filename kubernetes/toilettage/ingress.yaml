@@ -12,7 +12,7 @@ metadata:
   name: toilettage-api
   namespace: toilettage
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   ingressClassName: traefik
   rules:
@@ -33,7 +33,7 @@ metadata:
   name: toilettage-api-staging
   namespace: toilettage
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   ingressClassName: traefik
   rules:
