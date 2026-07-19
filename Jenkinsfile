@@ -111,12 +111,23 @@ pipeline {
               passwordVariable: 'HARBOR_PASS')]) {
             sh '''
               set -e
+              # Isolation de l'authentification Docker par build.
+              # Sans cela, tous les builds de l'agent partagent
+              # ~/.docker/config.json : le "docker logout" d'un build peut
+              # invalider l'authentification d'un autre build en cours
+              # (ex. dev et main lancés simultanément après un merge),
+              # ce qui provoque un "unauthorized ... action: push" alors que
+              # le login avait réussi.
+              export DOCKER_CONFIG="$WORKSPACE/.docker-auth-$BUILD_NUMBER"
+              mkdir -p "$DOCKER_CONFIG"
+              trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+
               FULL_IMAGE="$HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME"
+              echo "Compte Harbor utilisé : $HARBOR_USER"
               echo "$HARBOR_PASS" | docker login "$HARBOR_REGISTRY" -u "$HARBOR_USER" --password-stdin
               docker build -t "$FULL_IMAGE:$IMAGE_TAG" -t "$FULL_IMAGE:$API_IMAGE_ALIAS" .
               docker push "$FULL_IMAGE:$IMAGE_TAG"
               docker push "$FULL_IMAGE:$API_IMAGE_ALIAS"
-              docker logout "$HARBOR_REGISTRY" || true
             '''
           }
         }
